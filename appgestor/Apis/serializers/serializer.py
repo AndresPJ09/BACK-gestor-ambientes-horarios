@@ -18,16 +18,25 @@ class RolSerializer(serializers.ModelSerializer):
         }
 
 class RolVistaSerializer(serializers.ModelSerializer):
-    vista_rol = serializers.CharField(read_only=True)
-    vista_nombre = serializers.CharField(read_only=True)
     class Meta:
         model= RolVista
+        fields= '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class VistaSerializer(serializers.ModelSerializer):
+    nombre_modulo = serializers.CharField(source="modulo_id.nombre", read_only=True)
+    class Meta:
+        model= Vista
         fields= [
             "id",
-            "rol_id_id",
-            "vista_rol",
-            "vista_id_id",
-            "vista_nombre"
+            "nombre",
+            "descripcion",
+            "icono",
+            "ruta",
+            "modulo_id",
+            "nombre_modulo",
         ]
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
@@ -50,28 +59,20 @@ class UsuarioSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
-
-class UsuarioRolSerializer(serializers.ModelSerializer):
+        
+class TipoDocumentoSerializer(serializers.ModelSerializer):
     class Meta:
-        model= UsuarioRol
+        model= TipoDocumento
         fields= '__all__'
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
 
-class VistaSerializer(serializers.ModelSerializer):
-    nombre_modulo = serializers.CharField(source="modulo_id.nombre", read_only=True)
+
+class UsuarioRolSerializer(serializers.ModelSerializer):
     class Meta:
-        model= Vista
-        fields= [
-            "id",
-            "nombre",
-            "descripcion",
-            "icono",
-            "ruta",
-            "modulo_id",
-            "nombre_modulo",
-        ]
+        model= UsuarioRol
+        fields= '__all__'
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }

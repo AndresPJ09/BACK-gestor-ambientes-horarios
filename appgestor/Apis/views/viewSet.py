@@ -10,6 +10,7 @@ from django.utils import timezone  # ✅ Importar timezone correctamente
 from yaml import serialize
 
 from appgestor.Business.recuperarContrasena_service import RecuperarContrasenaService
+from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Entity.Dao.rolvista_dao import RolVistaDAO
 from appgestor.Entity.Dao.vista_dao import VistaDAO
@@ -17,7 +18,7 @@ from appgestor.models import  Ambiente, Instructor, Modulo, NivelFormacion, Peri
     RolVista, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
     AmbienteSerializer, EnviarCodigoSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer,  RecuperarContrasenaSerializer, \
-    RolSerializer, RolVistaSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
+    RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
 
 class ModuloViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
@@ -53,8 +54,19 @@ class RolVistaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet
     queryset = RolVista.objects.filter(fechaElimino__isnull=True)
     serializer_class = RolVistaSerializer
 
-    def get_queryset(self):
-        return RolVistaDAO.obtener_datos()
+    def list(self, request):
+        try:
+            vistarol = RolVistaService.obtener_datos()  # Ahora sí recibe objetos DTO
+
+            if not vistarol:
+                return Response({'error': 'No hay contenido'}, status=status.HTTP_204_NO_CONTENT)
+
+            # ✅ Ahora `asdict()` funcionará correctamente
+            rolvista_dict = [asdict(rolvista) for rolvista in vistarol]
+            return Response(rolvista_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs, partial=True)
@@ -108,12 +120,14 @@ class UsuarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet
 
         # Obtener el tipoDocumento de la solicitud o mantener el actual
         tipo_documento_id = data.get("tipoDocumento")
-        tipo_documento = get_object_or_404(TipoDocumento,
-                                           id=tipo_documento_id) if tipo_documento_id else instance.tipoDocumento
+        tipo_documento = get_object_or_404(TipoDocumento, id=tipo_documento_id) if tipo_documento_id else instance.tipoDocumento
 
         usuario_actualizado = UsuarioService.actualizar(
             instance.id,
             correo=data.get("correo", instance.correo),
+            nombres=data.get("nombres", instance.nombres),
+            apellidos=data.get("apellidos", instance.apellidos),
+            documento=data.get("documento", instance.documento),
             contrasena=data.get("contrasena") if "contrasena" in data else None,
             tipoDocumento=tipo_documento  # Mantenemos o actualizamos el tipo de documento
         )
@@ -232,6 +246,21 @@ class RecuperarContrasenaViewSet(viewsets.GenericViewSet):  # ✅ Cambiado Model
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Vista eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)  # ✅ Mensaje corregido
+    
+    
+class TipoDocumentoViewSet(viewsets.ModelViewSet):
+    queryset = TipoDocumento.objects.filter(fechaElimino__isnull=True)
+    serializer_class = TipoDocumentoSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+
+        return Response({'message':'Tipo de documento eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
     
     
 ### p
