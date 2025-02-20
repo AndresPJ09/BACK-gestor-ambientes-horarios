@@ -91,3 +91,37 @@ class EnviarCodigoSerializer(serializers.Serializer):
 class VerificarCodigoSerializer(serializers.Serializer):
     codigo = serializers.CharField(max_length=10)
     usuario_id = serializers.IntegerField()
+
+#p
+
+class InstructorSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Instructor
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class AmbienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ambiente
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+        
+class PeriodoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Periodo
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class NivelFormacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = NivelFormacion
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }

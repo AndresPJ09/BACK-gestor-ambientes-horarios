@@ -1,5 +1,6 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
+from django.core.validators import MinValueValidator, MaxValueValidator
 
 # Create your models here.
 class Modulo(models.Model):
@@ -108,3 +109,85 @@ class RecuperarContrasena(models.Model):
 
     class Meta:
         db_table = 'RecuperarContrasena'
+
+####################################
+#                p                 #   
+####################################
+
+class Instructor(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombres = models.CharField(max_length=255)
+    apellidos = models.CharField(max_length=255)
+    foto = models.BinaryField()
+    identificacion = models.BigIntegerField(unique=True)
+    tipo_contrato = models.CharField(max_length=255)
+    especialidad = models.CharField(max_length=255)
+    correo = models.EmailField(unique=True)
+    fecha_inicio = models.DateField()
+    fecha_finalizacion = models.DateField()
+    hora_ingreso = models.TimeField()
+    hora_egreso = models.TimeField()
+    horas_asignadas = models.IntegerField()
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'instructor'
+
+
+class NivelFormacion(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=50, unique=True)
+    nombre = models.CharField(max_length=255)
+    duracion = models.DurationField()
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'nivel_formacion'
+
+
+class Ambiente(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=50, unique=True)
+    nombre = models.CharField(max_length=255)
+    capacidad = models.IntegerField(
+             default=0, 
+        validators=[
+            MinValueValidator(0), 
+            MaxValueValidator(40)
+        ]
+    )
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ambiente'
+
+
+class Periodo(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=255)
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    ano = models.IntegerField()
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'periodo'
+
+
+
+
+####################################
+#                O                 #   
+####################################

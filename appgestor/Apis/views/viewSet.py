@@ -13,10 +13,10 @@ from appgestor.Business.recuperarContrasena_service import RecuperarContrasenaSe
 from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Entity.Dao.rolvista_dao import RolVistaDAO
 from appgestor.Entity.Dao.vista_dao import VistaDAO
-from appgestor.models import  Modulo, RecuperarContrasena, Rol, \
+from appgestor.models import  Ambiente, Instructor, Modulo, NivelFormacion, Periodo, RecuperarContrasena, Rol, \
     RolVista, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
-    EnviarCodigoSerializer, ModuloSerializer,  RecuperarContrasenaSerializer, \
+    AmbienteSerializer, EnviarCodigoSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer,  RecuperarContrasenaSerializer, \
     RolSerializer, RolVistaSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
 
@@ -233,3 +233,59 @@ class RecuperarContrasenaViewSet(viewsets.GenericViewSet):  # ✅ Cambiado Model
         instance.save()
         return Response({"message": "Vista eliminada correctamente"}, status=status.HTTP_204_NO_CONTENT)  # ✅ Mensaje corregido
     
+    
+### p
+class InstructorViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Instructor.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = InstructorSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class AmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Ambiente.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = AmbienteSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class PeriodoViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Periodo.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = PeriodoSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class NivelFormacionViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = NivelFormacion.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = NivelFormacionSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
