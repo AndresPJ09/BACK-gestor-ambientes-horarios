@@ -1,5 +1,7 @@
+import base64
 from rest_framework import serializers
 from appgestor.models import *
+from drf_extra_fields.fields import Base64ImageField
 
 class ModuloSerializer(serializers.ModelSerializer):
     class Meta:
@@ -96,19 +98,50 @@ class VerificarCodigoSerializer(serializers.Serializer):
 #p
 
 class InstructorSerializer(serializers.ModelSerializer):
+    foto = serializers.CharField(required=False, allow_null=True)  # Recibimos Base64 como string
+
     class Meta:
         model = Instructor
         fields = '__all__'
         extra_kwargs = {
-            'fechaElimino': {'read_only': True}
+            'fechaElimino': {'read_only': True},
+            'horas_asignadas': {'default': 0}
         }
 
+    def create(self, validated_data):
+        # Convertir Base64 a binario si se proporciona una imagen
+        foto_base64 = validated_data.pop('foto', None)
+        if foto_base64:
+            try:
+                validated_data['foto'] = base64.b64decode(foto_base64)
+            except Exception as e:
+                raise serializers.ValidationError({"foto": "Error al decodificar la imagen Base64."})
+        return super().create(validated_data)
+
+    def update(self, instance, validated_data):
+        # Manejar actualización de la foto
+        foto_base64 = validated_data.pop('foto', None)
+        if foto_base64:
+            try:
+                instance.foto = base64.b64decode(foto_base64)
+            except Exception as e:
+                raise serializers.ValidationError({"foto": "Error al decodificar la imagen Base64."})
+        return super().update(instance, validated_data)
+    
+    def to_representation(self, instance):
+        """Convierte la imagen binaria a Base64 cuando se consulta."""
+        data = super().to_representation(instance)
+        if instance.foto:
+            data["foto"] = base64.b64encode(instance.foto).decode("utf-8")  # Convierte a Base64
+        return data
+        
 class AmbienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ambiente
         fields = '__all__'
         extra_kwargs = {
-            'fechaElimino': {'read_only': True}
+            'fechaElimino': {'read_only': True},
+            'capacidad': {'default': 0}  # Cambio aquí
         }
         
 class PeriodoSerializer(serializers.ModelSerializer):
@@ -116,7 +149,8 @@ class PeriodoSerializer(serializers.ModelSerializer):
         model = Periodo
         fields = '__all__'
         extra_kwargs = {
-            'fechaElimino': {'read_only': True}
+            'fechaElimino': {'read_only': True},
+            'ano': {'default': 0}  # Cambio aquí
         }
 
 class NivelFormacionSerializer(serializers.ModelSerializer):

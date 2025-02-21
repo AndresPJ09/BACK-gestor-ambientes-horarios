@@ -6,7 +6,7 @@ class NivelFormacionDTO:
     id: int
     codigo: str
     nombre: str
-    duracion: datetime
+    duracion: str
     estado: bool
     fecha_creo: datetime
     fecha_modifico: datetime | None # type: ignore

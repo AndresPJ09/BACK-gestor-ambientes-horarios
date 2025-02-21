@@ -1,5 +1,6 @@
 from dataclasses import dataclass
 import datetime
+from typing import Optional
 
 
 @dataclass
@@ -7,13 +8,15 @@ class InstructorDTO:
     id: int
     nombres: str
     apellidos: str
-    foto: bytes
+    foto: Optional[bytes] 
     identificacion: str
     tipo_contrato: str
     especialidad: str 
     correo: str
-    fecha_inicio_y_hora_ingreso: datetime
-    fecha_finalizacion_y_hora_egreso: datetime
+    fecha_inicio: datetime
+    fecha_finalizacion: datetime
+    hora_ingreso: datetime.time
+    hora_egreso: datetime.time
     horas_asignadas: int
     estado: bool
     fechaCreo: datetime

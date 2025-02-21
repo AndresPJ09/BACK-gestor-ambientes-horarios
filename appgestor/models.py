@@ -116,18 +116,24 @@ class RecuperarContrasena(models.Model):
 
 class Instructor(models.Model):
     id = models.AutoField(primary_key=True)
-    nombres = models.CharField(max_length=255)
-    apellidos = models.CharField(max_length=255)
-    foto = models.BinaryField()
-    identificacion = models.BigIntegerField(unique=True)
-    tipo_contrato = models.CharField(max_length=255)
-    especialidad = models.CharField(max_length=255)
+    nombres = models.CharField(max_length=100)
+    apellidos = models.CharField(max_length=100)
+    foto = models.BinaryField(null=True, blank=True)
+    identificacion = models.CharField(max_length=10, unique=True, null=False, blank=False)
+    tipo_contrato = models.CharField(max_length=50)
+    especialidad = models.CharField(max_length=50)
     correo = models.EmailField(unique=True)
     fecha_inicio = models.DateField()
     fecha_finalizacion = models.DateField()
     hora_ingreso = models.TimeField()
     hora_egreso = models.TimeField()
-    horas_asignadas = models.IntegerField()
+    horas_asignadas = models.IntegerField(
+             default=0, 
+        validators=[
+            MinValueValidator(1), 
+            MaxValueValidator(6)
+        ]
+    )
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
@@ -140,8 +146,8 @@ class Instructor(models.Model):
 class NivelFormacion(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=50, unique=True)
-    nombre = models.CharField(max_length=255)
-    duracion = models.DurationField()
+    nombre = models.CharField(max_length=100)
+    duracion = models.CharField(max_length=100)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
@@ -154,11 +160,11 @@ class NivelFormacion(models.Model):
 class Ambiente(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=50, unique=True)
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=100)
     capacidad = models.IntegerField(
              default=0, 
         validators=[
-            MinValueValidator(0), 
+            MinValueValidator(20), 
             MaxValueValidator(40)
         ]
     )
@@ -173,10 +179,16 @@ class Ambiente(models.Model):
 
 class Periodo(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=255)
+    nombre = models.CharField(max_length=100)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
-    ano = models.IntegerField()
+    ano = models.IntegerField(
+             default=0, 
+        validators=[ 
+            MinValueValidator(2025), 
+            MaxValueValidator(2027)
+        ]
+    )
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
