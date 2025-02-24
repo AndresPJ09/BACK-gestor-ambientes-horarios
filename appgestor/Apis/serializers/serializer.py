@@ -99,6 +99,7 @@ class VerificarCodigoSerializer(serializers.Serializer):
 
 class InstructorSerializer(serializers.ModelSerializer):
     foto = serializers.CharField(required=False, allow_null=True)  # Recibimos Base64 como string
+    nombre_tipo_vinculacion = serializers.CharField(source="tipo_vinculacion_id.nombre", read_only=True)
 
     class Meta:
         model = Instructor
@@ -156,6 +157,39 @@ class PeriodoSerializer(serializers.ModelSerializer):
 class NivelFormacionSerializer(serializers.ModelSerializer):
     class Meta:
         model = NivelFormacion
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class TipoVinculacionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = TipoVinculacion
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+
+class ProgramaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Programa
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class CompetenciaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Competencia
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class ResultadoAprendizajeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ResultadoAprendizaje
         fields = '__all__'
         extra_kwargs = {
             'fechaElimino': {'read_only': True}

@@ -10,7 +10,7 @@ class InstructorDTO:
     apellidos: str
     foto: Optional[bytes] 
     identificacion: str
-    tipo_contrato: str
+    tipo_vinculacion_id: int
     especialidad: str 
     correo: str
     fecha_inicio: datetime

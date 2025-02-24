@@ -1,7 +1,7 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from appgestor.Apis.views.viewSet import AmbienteViewSet, InstructorViewSet, LoginView, ModuloViewSet, NivelFormacionViewSet, PeriodoViewSet, \
-    RecuperarContrasenaViewSet, RolViewSet, RolVistaViewSet, TipoDocumentoViewSet, \
+from appgestor.Apis.views.viewSet import AmbienteViewSet, CompetenciaViewSet, InstructorViewSet, LoginView, ModuloViewSet, NivelFormacionViewSet, PeriodoViewSet, ProgramaViewSet, \
+    RecuperarContrasenaViewSet, ResultadoAprendizajeViewSet, RolViewSet, RolVistaViewSet, TipoDocumentoViewSet, TipoVinculacionViewSet, \
     UsuarioRolViewSet, UsuarioViewSet, VistaViewSet\
 
 router = DefaultRouter()
@@ -19,6 +19,13 @@ router.register(r'instructor', InstructorViewSet, basename='instructor')
 router.register(r'ambiente', AmbienteViewSet, basename='ambiente')
 router.register(r'nivelformacion', NivelFormacionViewSet, basename='nivelformacion')
 router.register(r'periodo', PeriodoViewSet, basename='periodo')
+router.register(r'tipovinculo', TipoVinculacionViewSet, basename='tipovinculo')
+
+
+#o
+router.register(r'programa', ProgramaViewSet, basename='programa')
+router.register(r'competencia', CompetenciaViewSet, basename='competencia')
+router.register(r'resultadoaprendizaje', ResultadoAprendizajeViewSet, basename='resultadoaprendizaje')
 
 urlpatterns = [
     path('', include(router.urls)),

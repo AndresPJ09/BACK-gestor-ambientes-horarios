@@ -14,11 +14,11 @@ from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Entity.Dao.rolvista_dao import RolVistaDAO
 from appgestor.Entity.Dao.vista_dao import VistaDAO
-from appgestor.models import  Ambiente, Instructor, Modulo, NivelFormacion, Periodo, RecuperarContrasena, Rol, \
-    RolVista, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
+from appgestor.models import  Ambiente, Competencia, Instructor, Modulo, NivelFormacion, Periodo, Programa, RecuperarContrasena, ResultadoAprendizaje, Rol, \
+    RolVista, TipoVinculacion, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
-    AmbienteSerializer, EnviarCodigoSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer,  RecuperarContrasenaSerializer, \
-    RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
+    AmbienteSerializer, CompetenciaSerializer, EnviarCodigoSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
+    RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, TipoVinculacionSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
 
 class ModuloViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
@@ -275,7 +275,7 @@ class InstructorViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en 
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Instructor eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
     
 class AmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
@@ -289,7 +289,7 @@ class AmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en Vi
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Ambiente eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
     
 class PeriodoViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
@@ -303,7 +303,7 @@ class PeriodoViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en Vis
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Periodo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
     
 class NivelFormacionViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
@@ -317,4 +317,60 @@ class NivelFormacionViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Módulo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Nivel eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class TipoVinculacionViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = TipoVinculacion.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = TipoVinculacionSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Tipo de vinculo eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class ProgramaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Programa.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ProgramaSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Programa eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+    
+class CompetenciaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Competencia.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = CompetenciaSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Competencia eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+
+class ResultadoAprendizajeViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ResultadoAprendizaje.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ResultadoAprendizajeSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
