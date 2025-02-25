@@ -194,3 +194,21 @@ class ResultadoAprendizajeSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
+
+
+class ProyectoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Proyecto
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+
+class FaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Fase
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
