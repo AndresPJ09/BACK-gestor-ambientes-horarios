@@ -212,3 +212,38 @@ class FaseSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
+
+
+class FichaSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Ficha
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+        
+
+
+class ConsolidadoAmbienteSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = ConsolidadoAmbiente
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class HorarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Horario
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class InstructorHorarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = InstructorHorario
+        fields = '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }

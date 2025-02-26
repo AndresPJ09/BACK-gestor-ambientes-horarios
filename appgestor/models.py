@@ -1,6 +1,10 @@
 from django.db import models
 from django.contrib.auth.hashers import check_password
 from django.core.validators import MinValueValidator, MaxValueValidator
+from django.db import models
+from django.db.models.signals import pre_save
+from django.dispatch import receiver
+
 
 # Create your models here.
 class Modulo(models.Model):
@@ -293,3 +297,94 @@ class Fase(models.Model):
     
     class Meta:
         db_table = 'Fase'
+        
+
+class Ficha(models.Model):
+    id = models.AutoField(primary_key=True)
+    codigo = models.CharField(max_length=20, unique=True)
+    programa_id = models.ForeignKey('Programa', on_delete=models.CASCADE, related_name='fichas')
+    proyecto_id = models.ForeignKey('Proyecto', on_delete=models.CASCADE, related_name='fichas')
+    fecha_inicio = models.DateField()
+    fecha_fin = models.DateField()
+    fin_lectiva = models.DateField()
+    cupo = models.IntegerField(
+             default=0, 
+        validators=[
+            MinValueValidator(20), 
+            MaxValueValidator(40)
+        ]
+    )
+    numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    def __str__(self):
+        return f"Ficha {self.codigo}"
+    
+    def calcular_numero_semanas(self):
+        """Calcula la diferencia en semanas entre fecha_inicio y fecha_fin"""
+        if self.fecha_inicio and self.fecha_fin:
+            return (self.fecha_fin - self.fecha_inicio).days // 7
+        return 0  # Si no hay fechas, retorna 0
+
+    class Meta:
+        db_table = 'Ficha'
+
+# 🚀 Mover la señal fuera de la clase para evitar el error
+@receiver(pre_save, sender=Ficha)
+def set_numero_semanas(sender, instance, **kwargs):
+    instance.numero_semanas = instance.calcular_numero_semanas()
+
+
+
+class ConsolidadoAmbiente(models.Model):
+    id = models.AutoField(primary_key=True)
+    ficha_id= models.ForeignKey(Ficha, on_delete=models.CASCADE, related_name='consolidado_ambientes')
+    ambiente_id = models.ForeignKey('Ambiente', on_delete=models.CASCADE, related_name='consolidado_ambientes')
+    observaciones = models.TextField(blank=True, max_length=255)
+    estado = models.BooleanField(default=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ConsolidadoAmbiente'
+        
+from django.db import models
+
+class Horario(models.Model):
+    id = models.AutoField(primary_key=True)
+    usuario_id = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='horarios')
+    ficha_id = models.ForeignKey('Ficha', on_delete=models.CASCADE, related_name='horarios')
+    ambiente_id = models.ForeignKey('Ambiente', on_delete=models.CASCADE, related_name='horarios')
+    periodo_id = models.ForeignKey('Periodo', on_delete=models.CASCADE, related_name='horarios')
+    instructor_id = models.ForeignKey('Instructor', on_delete=models.CASCADE, related_name='horarios')
+    
+    jornada_programada = models.CharField(max_length=255)
+    fecha_inicio_hora_ingreso = models.DateTimeField()
+    fecha_fin_hora_egreso = models.DateTimeField()
+    horas = models.IntegerField()
+    validacion = models.CharField(max_length=255)
+    observaciones = models.TextField(blank=True, max_length=255)
+    
+    estado = models.BooleanField(default=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'Horario'
+
+class InstructorHorario(models.Model):
+    id = models.AutoField(primary_key=True)
+    horario_id = models.ForeignKey('Horario', on_delete=models.CASCADE, related_name='instructorhorario')
+    instructor_id = models.ForeignKey('Instructor', on_delete=models.CASCADE, related_name='instructorhorario')
+    observaciones = models.TextField(blank=True, max_length=255)
+    estado = models.BooleanField(default=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'InstructorHorario'

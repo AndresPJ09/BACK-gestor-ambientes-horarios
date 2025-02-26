@@ -1,6 +1,6 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from appgestor.Apis.views.viewSet import AmbienteViewSet, CompetenciaViewSet, FaseViewSet, InstructorViewSet, LoginView, ModuloViewSet, NivelFormacionViewSet, PeriodoViewSet, ProgramaViewSet, ProyectoViewSet, \
+from appgestor.Apis.views.viewSet import AmbienteViewSet, CompetenciaViewSet, ConsolidadoAmbienteViewSet, FaseViewSet, FichaViewSet, HorarioViewSet, InstructorHorarioViewSet, InstructorViewSet, LoginView, ModuloViewSet, NivelFormacionViewSet, PeriodoViewSet, ProgramaViewSet, ProyectoViewSet, \
     RecuperarContrasenaViewSet, ResultadoAprendizajeViewSet, RolViewSet, RolVistaViewSet, TipoDocumentoViewSet, TipoVinculacionViewSet, \
     UsuarioRolViewSet, UsuarioViewSet, VistaViewSet\
 
@@ -29,6 +29,10 @@ router.register(r'fase', FaseViewSet, basename='fase')
 router.register(r'programa', ProgramaViewSet, basename='programa')
 router.register(r'competencia', CompetenciaViewSet, basename='competencia')
 router.register(r'resultadoaprendizaje', ResultadoAprendizajeViewSet, basename='resultadoaprendizaje')
+router.register(r'ficha', FichaViewSet, basename='ficha')
+router.register(r'consolidadoambiente', ConsolidadoAmbienteViewSet, basename='consolidadoambiente')
+router.register(r'horario', HorarioViewSet, basename='horario')
+router.register(r'instructorhorario', InstructorHorarioViewSet, basename='instructorhorario')
 
 urlpatterns = [
     path('', include(router.urls)),
