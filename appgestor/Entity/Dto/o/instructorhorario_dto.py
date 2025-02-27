@@ -4,6 +4,7 @@ from datetime import datetime
 @dataclass
 class InstructorHorarioDTO:
     id=int
+    dias: str
     horario_id: int
     instructor_id: int
     observaciones: str

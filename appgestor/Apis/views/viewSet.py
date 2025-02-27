@@ -9,6 +9,8 @@ from drf_yasg.utils import swagger_auto_schema
 from django.utils import timezone  # ✅ Importar timezone correctamente
 from yaml import serialize
 
+from appgestor.Business.o.horario_service import HorarioService
+from appgestor.Business.o.instructorhorario_service import InstructorHorarioService
 from appgestor.Business.recuperarContrasena_service import RecuperarContrasenaService
 from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
@@ -419,23 +421,47 @@ class ConsolidadoAmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelVi
         instance.save()
         return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
-class HorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
-    queryset = Horario.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+class HorarioViewSet(viewsets.ModelViewSet):
+    queryset = Horario.objects.filter(fechaElimino__isnull=True)  
     serializer_class = HorarioSerializer
+    
+    def create(self, request, *args, **kwargs):
+        servicio = HorarioService()
+        try:
+            horario = servicio.crear_horario_con_instructor(request.data)
+            return Response(HorarioSerializer(horario).data, status=status.HTTP_201_CREATED)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
     def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs, partial=True)
-    
+        servicio = HorarioService()
+        horario_id = kwargs.get("pk")
+
+        try:
+            horario = servicio.update_horario_con_instructor(horario_id, request.data)
+            return Response(HorarioSerializer(horario).data, status=status.HTTP_200_OK)
+        except Exception as e:
+            return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Horario eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
-class InstructorHorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
-    queryset = InstructorHorario.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+class InstructorHorarioViewSet(viewsets.ModelViewSet):
+    queryset = InstructorHorario.objects.filter(fechaElimino__isnull=True)
     serializer_class = InstructorHorarioSerializer
 
+    def retrieve(self, request, *args, **kwargs):
+        instructor_id = kwargs.get('pk')
+        detalle_horario = InstructorHorarioService.obtener_lista_instructor_horario(instructor_id)
+
+        if detalle_horario:
+            return Response(detalle_horario, status=status.HTTP_200_OK)  # Devuelve la lista directamente
+        
+        return Response({"error": "Horario de instructor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs, partial=True)
     
@@ -443,4 +469,4 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelView
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Horario de instructor eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)

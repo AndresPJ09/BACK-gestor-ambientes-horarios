@@ -302,8 +302,8 @@ class Fase(models.Model):
 class Ficha(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
-    programa_id = models.ForeignKey('Programa', on_delete=models.CASCADE, related_name='fichas')
-    proyecto_id = models.ForeignKey('Proyecto', on_delete=models.CASCADE, related_name='fichas')
+    programa_id = models.ForeignKey(Programa, on_delete = models.CASCADE, null=True)
+    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE, null=True)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     fin_lectiva = models.DateField()
@@ -340,8 +340,8 @@ def set_numero_semanas(sender, instance, **kwargs):
 
 class ConsolidadoAmbiente(models.Model):
     id = models.AutoField(primary_key=True)
-    ficha_id= models.ForeignKey(Ficha, on_delete=models.CASCADE, related_name='consolidado_ambientes')
-    ambiente_id = models.ForeignKey('Ambiente', on_delete=models.CASCADE, related_name='consolidado_ambientes')
+    ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
+    ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
     observaciones = models.TextField(blank=True, max_length=255)
     estado = models.BooleanField(default=True)
     fechaCreo = models.DateTimeField(auto_now_add=True)
@@ -355,11 +355,11 @@ from django.db import models
 
 class Horario(models.Model):
     id = models.AutoField(primary_key=True)
-    usuario_id = models.ForeignKey('Usuario', on_delete=models.CASCADE, related_name='horarios')
-    ficha_id = models.ForeignKey('Ficha', on_delete=models.CASCADE, related_name='horarios')
-    ambiente_id = models.ForeignKey('Ambiente', on_delete=models.CASCADE, related_name='horarios')
-    periodo_id = models.ForeignKey('Periodo', on_delete=models.CASCADE, related_name='horarios')
-    instructor_id = models.ForeignKey('Instructor', on_delete=models.CASCADE, related_name='horarios')
+    usuario_id = models.ForeignKey(Usuario, on_delete = models.CASCADE, null=True)
+    ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
+    ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
+    periodo_id = models.ForeignKey(Periodo, on_delete = models.CASCADE, null=True)
+    instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE)
     
     jornada_programada = models.CharField(max_length=255)
     fecha_inicio_hora_ingreso = models.DateTimeField()
@@ -378,8 +378,9 @@ class Horario(models.Model):
 
 class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)
-    horario_id = models.ForeignKey('Horario', on_delete=models.CASCADE, related_name='instructorhorario')
-    instructor_id = models.ForeignKey('Instructor', on_delete=models.CASCADE, related_name='instructorhorario')
+    dia = models.TextField(blank=True, max_length=20, null=True)
+    horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
+    instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE, null=True)
     observaciones = models.TextField(blank=True, max_length=255)
     estado = models.BooleanField(default=True)
     fechaCreo = models.DateTimeField(auto_now_add=True)

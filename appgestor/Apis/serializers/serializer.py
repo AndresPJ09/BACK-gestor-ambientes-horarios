@@ -238,6 +238,8 @@ class HorarioSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
+            
+        
         }
 
 class InstructorHorarioSerializer(serializers.ModelSerializer):

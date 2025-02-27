@@ -7,3 +7,6 @@ class InstructorHorarioService(BaseService):
     dao=InstructorHorarioDAO
     model=InstructorHorarioDTO
     
+    @staticmethod
+    def obtener_lista_instructor_horario(intructor_id):
+        return InstructorHorarioDAO.obtener_lista_instructor_horario(intructor_id)
