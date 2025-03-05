@@ -4,7 +4,7 @@ from datetime import datetime
 
 @dataclass
 class HorarioDTO:
-    id=int
+    id: int
     usuario_id: int
     ficha_id: int
     ambiente_id: int

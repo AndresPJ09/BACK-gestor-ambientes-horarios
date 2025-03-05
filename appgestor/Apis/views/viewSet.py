@@ -453,18 +453,24 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
     queryset = InstructorHorario.objects.filter(fechaElimino__isnull=True)
     serializer_class = InstructorHorarioSerializer
 
-    def retrieve(self, request, *args, **kwargs):
-        instructor_id = kwargs.get('pk')
-        detalle_horario = InstructorHorarioService.obtener_lista_instructor_horario(instructor_id)
+    def list(self, request):
+        try:
+            horarioinstructor = InstructorHorarioService.obtener_todos_los_horarios()  # Ahora sí recibe objetos DTO
 
-        if detalle_horario:
-            return Response(detalle_horario, status=status.HTTP_200_OK)  # Devuelve la lista directamente
-        
-        return Response({"error": "Horario de instructor no encontrado"}, status=status.HTTP_404_NOT_FOUND)
+            if not horarioinstructor:
+                return Response({'error': 'No hay contenido'}, status=status.HTTP_204_NO_CONTENT)
 
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs, partial=True)
-    
+            # ✅ Ahora `asdict()` funcionará correctamente
+            InstructorHorario_dict = [asdict(InstructorHorario) for InstructorHorario in horarioinstructor]
+            return Response(InstructorHorario_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    def retrieve(self, request, pk=None):
+        horarios = InstructorHorarioService.obtener_horarios_por_instructor(pk)
+        return Response(horarios, status=status.HTTP_200_OK)
+
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.fechaElimino = timezone.now()

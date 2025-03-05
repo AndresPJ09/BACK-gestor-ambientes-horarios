@@ -6,6 +6,10 @@ class InstructorHorarioDTO:
     id=int
     dias: str
     horario_id: int
+    jornada_programada: str
+    hora_ingreso_horario: str
+    hora_egreso_horario: str
+    horas_horario: str
     instructor_id: int
     observaciones: str
     estado: bool
