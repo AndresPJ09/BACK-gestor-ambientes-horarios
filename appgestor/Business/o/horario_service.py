@@ -17,6 +17,10 @@ class HorarioService(BaseService):
         ambiente = Ambiente.objects.get(id=data.get('ambiente_id'))
         periodo = Periodo.objects.get(id=data.get('periodo_id'))
         instructor = Instructor.objects.get(id=data.get('instructor_id'))
+        estado = data.get('estado', True)  # Si no se envía, por defecto es True
+        if isinstance(estado, str):  
+            estado = estado.lower() == 'true'  # Convierte "true"/"false" en booleano
+
 
         horario = Horario.objects.create(
             usuario_id=usuario,  
@@ -30,7 +34,7 @@ class HorarioService(BaseService):
             horas=data.get('horas'),
             validacion=data.get('validacion'),
             observaciones=data.get('observaciones'),
-            estado=data.get('estado', True)
+            estado=estado 
         )
 
         InstructorHorario.objects.create(
@@ -49,6 +53,12 @@ class HorarioService(BaseService):
     def update_horario_con_instructor(horario_id, data):
         try:
             horario = Horario.objects.get(id=horario_id)
+            
+            
+                 # Convertir valores si es necesario
+            estado = data.get('estado', horario.estado)  # Si no se envía, conserva el valor actual
+            if isinstance(estado, str):
+             estado = estado.lower() == 'true'  # Convierte "true"/"false" a booleano
 
             # Actualizar los datos del horario
             horario.jornada_programada = data.get('jornada_programada', horario.jornada_programada)
@@ -57,7 +67,7 @@ class HorarioService(BaseService):
             horario.horas = data.get('horas', horario.horas)
             horario.validacion = data.get('validacion', horario.validacion)
             horario.observaciones = data.get('observaciones', horario.observaciones)
-            horario.estado = data.get('estado', horario.estado)
+            horario.estado = estado
 
             # Verificar si se envió un nuevo instructor
             if 'instructor_id' in data:

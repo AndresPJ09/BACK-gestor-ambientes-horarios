@@ -316,7 +316,7 @@ class Ficha(models.Model):
         ]
     )
     numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
-    estado = models.BooleanField()
+    #estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
     fechaElimino = models.DateTimeField(blank=True, null=True)
