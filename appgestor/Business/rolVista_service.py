@@ -6,3 +6,19 @@ from appgestor.Entity.Dto.rolVista_dto import RolVistaDTO
 class RolVistaService(BaseService):
     model=RolVistaDTO
     dao=RolVistaDAO
+    
+    
+    @classmethod
+    def obtener_datos(cls):
+        query = RolVistaDAO.obtener_datos()
+
+        return [
+            RolVistaDTO(
+                # rolvista_id=rolvista['rolvista_id'],
+                rol_id=rolvista['rol_id'],
+                nombre_rol=rolvista['nombre_rol'],
+                vista_id=rolvista['vista_id'],
+                nombre_vista=rolvista['nombre_vista'],
+            )
+            for rolvista in query
+        ]

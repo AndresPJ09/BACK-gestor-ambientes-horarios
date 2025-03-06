@@ -4,11 +4,12 @@ from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Business.base_service import BaseService
 from appgestor.Entity.Dao.recuperarcontrasena_dao import RecuperarContrasenaDAO
 from appgestor.Entity.Dto.recuperarcontrasena_dto import RecuperarContrasenaDTO
+from appgestor.models import RecuperarContrasena
 from appgestor.utils.email_utils import EmailService
 
 
 class RecuperarContrasenaService(BaseService):
-    model=RecuperarContrasenaDTO
+    model=RecuperarContrasena
     dao=RecuperarContrasenaDAO
     
     @classmethod

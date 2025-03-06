@@ -8,6 +8,7 @@ from rest_framework import status
 from drf_yasg.utils import swagger_auto_schema
 from django.utils import timezone  # ✅ Importar timezone correctamente
 from yaml import serialize
+from dataclasses import asdict
 
 from appgestor.Business.o.horario_service import HorarioService
 from appgestor.Business.o.instructorhorario_service import InstructorHorarioService

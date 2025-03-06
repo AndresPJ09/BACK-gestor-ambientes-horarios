@@ -26,7 +26,8 @@ class RolVistaDAO(BaseDAO):
                 INNER JOIN sena.RolVista AS rv ON rv.rol_id_id = r.Id
                 INNER JOIN sena.Vista AS v ON v.Id = rv.vista_id_id
                 INNER JOIN sena.Modulo AS m ON m.Id = v.modulo_id_id
-                WHERE r.Id = %s;
+                WHERE r.Id = %s
+                AND rv.fechaElimino IS NULL;
             """, [rol_id])
             columnas = [col[0] for col in cursor.description]
             resultados = [MenuDto(**dict(zip(columnas, fila))) for fila in cursor.fetchall()]
@@ -36,10 +37,11 @@ class RolVistaDAO(BaseDAO):
     def obtener_datos():
         with connection.cursor() as cursor:
             cursor.execute("""
-                SELECT R.id AS rol_id,
-                       R.nombre AS nombre_rol,
-                       V.id AS vista_id,
-                       V.nombre AS nombre_vista
+                SELECT RV.id AS rolvista_id,
+                    R.id AS rol_id,
+                    R.nombre AS nombre_rol,
+                   V.id AS vista_id,
+                   V.nombre AS nombre_vista
                 FROM sena.RolVista AS RV
                 INNER JOIN sena.Rol AS R on RV.rol_id_id = R.id
                 INNER JOIN sena.Vista AS V on RV.vista_id_id = V.id

@@ -1,7 +1,7 @@
+from time import localtime
 from django.db import models
 from django.contrib.auth.hashers import check_password
 from django.core.validators import MinValueValidator, MaxValueValidator
-from django.db import models
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
@@ -377,6 +377,18 @@ class Horario(models.Model):
 
     class Meta:
         db_table = 'Horario'
+        
+    def calcular_horas(self):
+        """Calcula la diferencia en horas como un número entero (redondeando hacia abajo)."""
+        if self.fecha_inicio_hora_ingreso and self.fecha_fin_hora_egreso:
+            diferencia = localtime(self.fecha_fin_hora_egreso) - localtime(self.fecha_inicio_hora_ingreso)
+            return diferencia.total_seconds() // 3600  # División entera para obtener solo las horas completas
+        return 0  # Si no hay fechas, devolver el valor por defecto
+    
+    @receiver(pre_save, sender=Ficha)
+    def set_horas(sender, instance, **kwargs):
+        instance.horas = instance.calcular_horas()
+
 
 class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)

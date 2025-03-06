@@ -66,9 +66,6 @@ class TipoDocumentoSerializer(serializers.ModelSerializer):
     class Meta:
         model= TipoDocumento
         fields= '__all__'
-        extra_kwargs = {
-            'fechaElimino': {'read_only': True}
-        }
 
 
 class UsuarioRolSerializer(serializers.ModelSerializer):
@@ -238,7 +235,6 @@ class HorarioSerializer(serializers.ModelSerializer):
         fields = '__all__'
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
-            
         
         }
 

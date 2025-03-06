@@ -31,7 +31,7 @@ class HorarioService(BaseService):
             jornada_programada=data.get('jornada_programada'),
             fecha_inicio_hora_ingreso=data.get('fecha_inicio_hora_ingreso'),
             fecha_fin_hora_egreso=data.get('fecha_fin_hora_egreso'),
-            horas=data.get('horas'),
+            horas=data.get('horas', 0),
             validacion=data.get('validacion'),
             observaciones=data.get('observaciones'),
             estado=estado 
