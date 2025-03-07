@@ -433,6 +433,8 @@ class HorarioViewSet(viewsets.ModelViewSet):
             return Response(HorarioSerializer(horario).data, status=status.HTTP_201_CREATED)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response({"error": "Error inesperado al crear el horario."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def update(self, request, *args, **kwargs):
         servicio = HorarioService()
@@ -443,6 +445,8 @@ class HorarioViewSet(viewsets.ModelViewSet):
             return Response(HorarioSerializer(horario).data, status=status.HTTP_200_OK)
         except Exception as e:
             return Response({"error": str(e)}, status=status.HTTP_400_BAD_REQUEST)
+        except Exception:
+            return Response({"error": "Error inesperado al actualizar el horario."}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
@@ -453,6 +457,36 @@ class HorarioViewSet(viewsets.ModelViewSet):
 class InstructorHorarioViewSet(viewsets.ModelViewSet):
     queryset = InstructorHorario.objects.filter(fechaElimino__isnull=True)
     serializer_class = InstructorHorarioSerializer
+    
+    @action(detail=False, methods=['get'], url_path='usuario/(?P<usuario_id>\d+)')
+    def filtrar_por_usuario(self, request, usuario_id=None):
+        if not usuario_id:
+            return Response({'error': 'Se requiere el usuario_id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            horarios = InstructorHorarioService.obtener_horario_por_usuario(usuario_id)
+            if not horarios:
+                return Response({'error': 'No se encontraron horarios para el usuario'}, status=status.HTTP_204_NO_CONTENT)
+
+            return Response([asdict(horario) for horario in horarios], status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
+    @action(detail=False, methods=['get'], url_path='periodo/(?P<periodo_id>\d+)')
+    def filtrar_por_periodo(self, request, periodo_id=None):
+        if not periodo_id:
+            return Response({'error': 'Se requiere el periodo_id'}, status=status.HTTP_400_BAD_REQUEST)
+
+        try:
+            horarios = InstructorHorarioService.obtener_horario_por_periodo(periodo_id)
+            if not horarios:
+                return Response({'error': 'No se encontraron horarios para el período'}, status=status.HTTP_204_NO_CONTENT)
+
+            return Response([asdict(horario) for horario in horarios], status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
     def list(self, request):
         try:
@@ -467,10 +501,7 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-    def retrieve(self, request, pk=None):
-        horarios = InstructorHorarioService.obtener_horarios_por_instructor(pk)
-        return Response(horarios, status=status.HTTP_200_OK)
+    
 
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()

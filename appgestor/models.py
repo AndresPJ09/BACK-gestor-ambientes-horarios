@@ -385,9 +385,6 @@ class Horario(models.Model):
             return diferencia.total_seconds() // 3600  # División entera para obtener solo las horas completas
         return 0  # Si no hay fechas, devolver el valor por defecto
     
-    @receiver(pre_save, sender=Ficha)
-    def set_horas(sender, instance, **kwargs):
-        instance.horas = instance.calcular_horas()
 
 
 class InstructorHorario(models.Model):
