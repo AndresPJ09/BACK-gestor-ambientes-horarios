@@ -52,7 +52,7 @@ class HorarioService(BaseService):
             instructor_id=instructor,
             dia=data.get('dia'),
             observaciones=data.get('observaciones'),
-            estado=True
+            estado=horario.estado
         )
         return horario
     
@@ -68,11 +68,11 @@ class HorarioService(BaseService):
             if isinstance(estado, str):
                 estado = estado.lower() == 'true'  # Convierte "true"/"false" a booleano
                 
-            #if 'ficha_id' in data:
-                #ficha = Ficha.objects.get(id=data['ficha_id'])
-            #if not ficha.estado:
-            #    raise ValueError("No se puede asignar una ficha inactiva.")
-            #horario.ficha_id = ficha
+            if 'ficha_id' in data:
+                ficha = Ficha.objects.get(id=data['ficha_id'])
+            if not ficha.estado:
+                raise ValueError("No se puede asignar una ficha inactiva.")
+            horario.ficha_id = ficha
         
             if 'ambiente_id' in data:
                 ambiente = Ambiente.objects.get(id=data['ambiente_id'])

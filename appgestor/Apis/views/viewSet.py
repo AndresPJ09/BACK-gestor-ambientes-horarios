@@ -17,10 +17,10 @@ from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Entity.Dao.rolvista_dao import RolVistaDAO
 from appgestor.Entity.Dao.vista_dao import VistaDAO
-from appgestor.models import  Ambiente, Competencia, ConsolidadoAmbiente, Fase, Ficha, Horario, Instructor, InstructorHorario, Modulo, NivelFormacion, Periodo, Programa, Proyecto, RecuperarContrasena, ResultadoAprendizaje, Rol, \
+from appgestor.models import  Actividad, ActividadFase, Ambiente, Competencia, ConsolidadoAmbiente, Fase, Ficha, Horario, Instructor, InstructorHorario, Modulo, NivelFormacion, Periodo, Programa, Proyecto, ProyectoFase, RecuperarContrasena, ResultadoAprendizaje, Rol, \
     RolVista, TipoVinculacion, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
-    AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
+    ActividadFaseSerializer, ActividadSerializer, AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoFaseSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
     RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, TipoVinculacionSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
     
@@ -265,7 +265,7 @@ class TipoDocumentoViewSet(viewsets.ModelViewSet):
         return Response({'message':'Tipo de documento eliminado correctamente'}, status=status.HTTP_204_NO_CONTENT)
     
     
-### p
+### Gestir de Ambientes y horarios
 class InstructorViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = Instructor.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
     serializer_class = InstructorSerializer
@@ -394,7 +394,7 @@ class FaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaV
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Fase eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
 
 class FichaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = Ficha.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
@@ -407,7 +407,7 @@ class FichaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en Vista
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Ficha eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
 class ConsolidadoAmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = ConsolidadoAmbiente.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
@@ -508,3 +508,42 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Horario de instructor eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+
+class ProyectoFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ProyectoFase.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ProyectoFaseSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Proyecto fase eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+class ActividadViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = Actividad.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ActividadSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Actividad eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+       
+class ActividadFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ActividadFase.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ActividadFaseSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Actividad fase eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)

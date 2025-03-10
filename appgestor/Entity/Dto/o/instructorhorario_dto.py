@@ -23,4 +23,8 @@ class InstructorHorarioDTO:
     instructor_fecha_inicio_hora_ingreso: datetime
     instructor_fecha_fin_hora_egreso: datetime
     instructor_horas: int
-    observaciones: str  # Antes "instructor_observaciones"
+    observaciones: str 
+    estado: bool
+    fechaCreo: datetime
+    fechaModifico: datetime | None # type: ignore
+    fechaElimino: datetime | None # type: ignore

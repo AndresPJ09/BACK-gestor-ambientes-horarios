@@ -5,8 +5,7 @@ from django.core.validators import MinValueValidator, MaxValueValidator
 from django.db.models.signals import pre_save
 from django.dispatch import receiver
 
-
-# Create your models here.
+# Creación de modelos.
 class Modulo(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=255)
@@ -115,7 +114,7 @@ class RecuperarContrasena(models.Model):
         db_table = 'RecuperarContrasena'
 
 ####################################
-#                p                 #   
+#           parametrización        #   
 ####################################
 
 
@@ -131,7 +130,6 @@ class TipoVinculacion(models.Model):
 
     class Meta:
         db_table = 'TipoVinculacion'
-
 
 class Instructor(models.Model):
     id = models.AutoField(primary_key=True)
@@ -161,7 +159,6 @@ class Instructor(models.Model):
     class Meta:
         db_table = 'Instructor'
 
-
 class NivelFormacion(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
@@ -174,10 +171,7 @@ class NivelFormacion(models.Model):
 
     class Meta:
         db_table = 'NivelFormacion'
-        
-        
-from django.db import models
-
+     
 class Programa(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=50, unique=True)
@@ -190,7 +184,6 @@ class Programa(models.Model):
 
     class Meta:
         db_table = 'Programa'
-
 
 class Ambiente(models.Model):
     id = models.AutoField(primary_key=True)
@@ -210,7 +203,6 @@ class Ambiente(models.Model):
 
     class Meta:
         db_table = 'Ambiente'
-
 
 class Periodo(models.Model):
     id = models.AutoField(primary_key=True)
@@ -233,9 +225,8 @@ class Periodo(models.Model):
         db_table = 'Periodo'
 
 ####################################
-#                O                 #   
+#           Operacional            #   
 ####################################
-
 
 class Competencia(models.Model):
     id = models.AutoField(primary_key=True)
@@ -253,7 +244,6 @@ class Competencia(models.Model):
     class Meta:
         db_table = 'Competencia'
         
-
 class ResultadoAprendizaje(models.Model):
     id = models.AutoField(primary_key=True)
     descripcion = models.TextField(max_length=250)
@@ -267,11 +257,10 @@ class ResultadoAprendizaje(models.Model):
     class Meta:
         db_table = 'ResultadoAprendizaje'
 
-
 class Proyecto(models.Model):
     id = models.AutoField(primary_key=True)
     nombre = models.CharField(max_length=100)
-    jornada_tecncia = models.CharField(max_length=20)
+    jornada_tecnica = models.CharField(max_length=20)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
@@ -282,7 +271,6 @@ class Proyecto(models.Model):
     
     class Meta:
         db_table = 'Proyecto'
-        
         
 class Fase(models.Model):
     id = models.AutoField(primary_key=True)
@@ -299,7 +287,6 @@ class Fase(models.Model):
     class Meta:
         db_table = 'Fase'
         
-
 class Ficha(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
@@ -316,7 +303,7 @@ class Ficha(models.Model):
         ]
     )
     numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
-    #estado = models.BooleanField()
+    estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
     fechaElimino = models.DateTimeField(blank=True, null=True)
@@ -338,8 +325,6 @@ class Ficha(models.Model):
 def set_numero_semanas(sender, instance, **kwargs):
     instance.numero_semanas = instance.calcular_numero_semanas()
 
-
-
 class ConsolidadoAmbiente(models.Model):
     id = models.AutoField(primary_key=True)
     ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
@@ -352,8 +337,6 @@ class ConsolidadoAmbiente(models.Model):
 
     class Meta:
         db_table = 'ConsolidadoAmbiente'
-        
-from django.db import models
 
 class Horario(models.Model):
     id = models.AutoField(primary_key=True)
@@ -385,8 +368,6 @@ class Horario(models.Model):
             return diferencia.total_seconds() // 3600  # División entera para obtener solo las horas completas
         return 0  # Si no hay fechas, devolver el valor por defecto
     
-
-
 class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)
     dia = models.TextField(blank=True, max_length=20, null=True)
@@ -400,3 +381,51 @@ class InstructorHorario(models.Model):
 
     class Meta:
         db_table = 'InstructorHorario'
+              
+class ProyectoFase(models.Model):
+    id = models.AutoField(primary_key=True)
+    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE, null=True)
+    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ProyectoFase'
+          
+class Actividad(models.Model):
+    id = models.AutoField(primary_key=True)
+    nombre = models.CharField(max_length=100)
+    proyectofase_id = models.ForeignKey(ProyectoFase, on_delete = models.CASCADE, null=True)
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'Actividad'
+
+class ActividadFase(models.Model):
+    id = models.AutoField(primary_key=True)
+    actividad_id = models.ForeignKey(Actividad, on_delete = models.CASCADE, null=True)
+    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
+    fecha_inicio_actividad = models.DateTimeField()
+    fecha_fin_actividad = models.DateTimeField()
+    numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+    
+    def calcular_numero_semanas(self):
+        """Calcula la diferencia en semanas entre fecha_inicio_actividad y fecha_fin_actividad"""
+        if self.fecha_inicio_actividad and self.fecha_fin_actividad:
+            return (self.fecha_fin_actividad - self.fecha_inicio_actividad).days // 7
+        return 0  # Si no hay fechas, retorna 0
+
+    class Meta:
+        db_table = 'ActividadFase'
+        
+# 🚀 Mover la señal fuera de la clase para evitar el error
+@receiver(pre_save, sender=ActividadFase)
+def set_numero_semanas(sender, instance, **kwargs):
+    instance.numero_semanas = instance.calcular_numero_semanas()

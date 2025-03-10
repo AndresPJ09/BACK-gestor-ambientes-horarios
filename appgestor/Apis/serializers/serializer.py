@@ -92,7 +92,7 @@ class VerificarCodigoSerializer(serializers.Serializer):
     codigo = serializers.CharField(max_length=10)
     usuario_id = serializers.IntegerField()
 
-#p
+# Gestor de ambienteas y h
 
 class InstructorSerializer(serializers.ModelSerializer):
     foto = serializers.CharField(required=False, allow_null=True)  # Recibimos Base64 como string
@@ -167,7 +167,6 @@ class TipoVinculacionSerializer(serializers.ModelSerializer):
             'fechaElimino': {'read_only': True}
         }
 
-
 class ProgramaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Programa
@@ -192,7 +191,6 @@ class ResultadoAprendizajeSerializer(serializers.ModelSerializer):
             'fechaElimino': {'read_only': True}
         }
 
-
 class ProyectoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Proyecto
@@ -200,7 +198,6 @@ class ProyectoSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
-
 
 class FaseSerializer(serializers.ModelSerializer):
     class Meta:
@@ -210,7 +207,6 @@ class FaseSerializer(serializers.ModelSerializer):
             'fechaElimino': {'read_only': True}
         }
 
-
 class FichaSerializer(serializers.ModelSerializer):
     class Meta:
         model = Ficha
@@ -219,8 +215,6 @@ class FichaSerializer(serializers.ModelSerializer):
             'fechaElimino': {'read_only': True}
         }
         
-
-
 class ConsolidadoAmbienteSerializer(serializers.ModelSerializer):
     class Meta:
         model = ConsolidadoAmbiente
@@ -245,3 +239,28 @@ class InstructorHorarioSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
+
+class ProyectoFaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= ProyectoFase
+        fields= '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+        
+class ActividadSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= Actividad
+        fields= '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+
+class ActividadFaseSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= ActividadFase
+        fields= '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+        

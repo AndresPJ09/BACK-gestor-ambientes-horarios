@@ -39,7 +39,13 @@ class InstructorHorarioService(BaseService):
                 instructor_fecha_inicio_hora_ingreso=item.get('instructor_fecha_inicio_hora_ingreso'),
                 instructor_fecha_fin_hora_egreso=item.get('instructor_fecha_fin_hora_egreso'),
                 instructor_horas=item.get('instructor_horas'),
+                
                 observaciones=item.get('instructor_observaciones'),
+                estado=item.get('instructor_estado'),
+
+                fechaCreo=item.get('fechaCreo'),
+                fechaModifico=item.get('fechaModifico'),
+                fechaElimino=item.get('fechaElimino')
             )
             for item in query
         ]
@@ -77,6 +83,11 @@ class InstructorHorarioService(BaseService):
                 instructor_fecha_fin_hora_egreso=item.get('instructor_fecha_fin_hora_egreso'),
                 instructor_horas=item.get('instructor_horas'),
                 observaciones=item.get('instructor_observaciones'),
+                estado=item.get('instructor_estado'),
+
+                fechaCreo=item.get('fechaCreo'),
+                fechaModifico=item.get('fechaModifico'),
+                fechaElimino=item.get('fechaElimino')
             ) for item in query
         ]
 
@@ -114,5 +125,10 @@ class InstructorHorarioService(BaseService):
                 instructor_fecha_fin_hora_egreso=item.get('instructor_fecha_fin_hora_egreso'),
                 instructor_horas=item.get('instructor_horas'),
                 observaciones=item.get('instructor_observaciones'),
+                estado=item.get('instructor_estado'),
+
+                fechaCreo=item.get('fechaCreo'),
+                fechaModifico=item.get('fechaModifico'),
+                fechaElimino=item.get('fechaElimino')
             ) for item in query
         ]
