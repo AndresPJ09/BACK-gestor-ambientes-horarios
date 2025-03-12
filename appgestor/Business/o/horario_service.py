@@ -17,16 +17,15 @@ class HorarioService(BaseService):
         ambiente = Ambiente.objects.get(id=data.get('ambiente_id'))
         periodo = Periodo.objects.get(id=data.get('periodo_id'))
         instructor = Instructor.objects.get(id=data.get('instructor_id'))
-        
-        estado = data.get('estado', True)  # Si no se envía, por defecto es True
+        estado = data.get('estado', True) 
         if isinstance(estado, str):  
-            estado = estado.lower() == 'true'  # Convierte "true"/"false" en booleano
+            estado = estado.lower() == 'true' 
              
          # ✅ Convertir `activo` en booleano manualmente
         if not bool(ambiente.estado):
             raise ValueError("No se puede asignar un horario a un ambiente inactivo.")
-        #if not bool(ficha.estado):
-            #raise ValueError("No se puede asignar un horario a una ficha inactiva.")
+        if not bool(ficha.estado):
+            raise ValueError("No se puede asignar un horario a una ficha inactiva.")
         if not bool(periodo.estado):
             raise ValueError("No se puede asignar un horario a un periodo inactivo.")
         if not bool(instructor.estado):
@@ -63,10 +62,9 @@ class HorarioService(BaseService):
         try:
             horario = Horario.objects.get(id=horario_id)
             
-            # Convertir valores si es necesario
-            estado = data.get('estado', horario.estado)  # Si no se envía, conserva el valor actual
+            estado = data.get('estado', horario.estado) 
             if isinstance(estado, str):
-                estado = estado.lower() == 'true'  # Convierte "true"/"false" a booleano
+                estado = estado.lower() == 'true'
                 
             if 'ficha_id' in data:
                 ficha = Ficha.objects.get(id=data['ficha_id'])

@@ -222,6 +222,15 @@ class ConsolidadoAmbienteSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
+        
+class ConsolidadoHorarioSerializer(serializers.ModelSerializer):
+    class Meta:
+        model= ConsolidadoHorario
+        fields= '__all__'
+        extra_kwargs = {
+            'fechaElimino': {'read_only': True}
+        }
+        
 
 class HorarioSerializer(serializers.ModelSerializer):
     class Meta:

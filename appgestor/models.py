@@ -368,6 +368,19 @@ class Horario(models.Model):
             return diferencia.total_seconds() // 3600  # División entera para obtener solo las horas completas
         return 0  # Si no hay fechas, devolver el valor por defecto
     
+class ConsolidadoHorario(models.Model):
+    id = models.AutoField(primary_key=True)
+    ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
+    instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE, null=True)
+    observaciones = models.TextField(blank=True, max_length=255)
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ConsolidadoHorario'
+    
 class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)
     dia = models.TextField(blank=True, max_length=20, null=True)
@@ -409,8 +422,8 @@ class ActividadFase(models.Model):
     id = models.AutoField(primary_key=True)
     actividad_id = models.ForeignKey(Actividad, on_delete = models.CASCADE, null=True)
     fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
-    fecha_inicio_actividad = models.DateTimeField()
-    fecha_fin_actividad = models.DateTimeField()
+    fecha_inicio_actividad = models.DateField()
+    fecha_fin_actividad = models.DateField()
     numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
