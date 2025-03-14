@@ -16,7 +16,6 @@ class InstructorHorarioDAO:
             cursor.execute("""
                 SELECT 
                     IH.id AS instructor_horario_id,
-                    IH.dia AS instructor_dia,
                     IH.observaciones AS instructor_observaciones,
                     IH.estado AS instructor_estado,
                     IH.fechaCreo AS fechaCreo,
@@ -43,6 +42,7 @@ class InstructorHorarioDAO:
                     A.codigo AS ambiente_codigo, 
                     A.nombre AS ambiente_nombre,
 
+                    H.dia AS instructor_dia,
                     H.jornada_programada AS instructor_jornada_programada,
                     H.fecha_inicio_hora_ingreso AS instructor_fecha_inicio_hora_ingreso,
                     H.fecha_fin_hora_egreso AS instructor_fecha_fin_hora_egreso,
@@ -71,7 +71,6 @@ class InstructorHorarioDAO:
         query = """
             SELECT 
                 IH.id AS instructor_horario_id,
-                IH.dia AS instructor_dia,
                 IH.observaciones AS instructor_observaciones,
                 IH.estado AS instructor_estado,
                 IH.fechaCreo AS fechaCreo,
@@ -93,7 +92,8 @@ class InstructorHorarioDAO:
                 
                 F.id AS ficha_id,
                 F.codigo AS ficha_codigo,
-
+                
+                H.dia AS instructor_dia,
                 H.jornada_programada AS instructor_jornada_programada,
                 H.fecha_inicio_hora_ingreso AS instructor_fecha_inicio_hora_ingreso,
                 H.fecha_fin_hora_egreso AS instructor_fecha_fin_hora_egreso,
@@ -128,7 +128,6 @@ class InstructorHorarioDAO:
         query = """
             SELECT 
                 IH.id AS instructor_horario_id,
-                IH.dia AS instructor_dia,
                 IH.observaciones AS instructor_observaciones,
                 IH.estado AS instructor_estado,
                 IH.fechaCreo AS fechaCreo,
@@ -151,6 +150,7 @@ class InstructorHorarioDAO:
                 F.id AS ficha_id,
                 F.codigo AS ficha_codigo,
 
+                H.dia AS instructor_dia,
                 H.jornada_programada AS instructor_jornada_programada,
                 H.fecha_inicio_hora_ingreso AS instructor_fecha_inicio_hora_ingreso,
                 H.fecha_fin_hora_egreso AS instructor_fecha_fin_hora_egreso,

@@ -13,7 +13,6 @@ class InstructorHorarioService(BaseService):
         return [
             InstructorHorarioDTO(
                 id=item.get('instructor_horario_id'), 
-                dia=item.get('instructor_dia'),
 
                 usuario_id=item.get('usuario_id'),
                 usuario_nombres=item.get('usuario_nombres'),
@@ -35,6 +34,7 @@ class InstructorHorarioService(BaseService):
                 ambiente_codigo=item.get('ambiente_codigo'),
                 ambiente_nombre=item.get('ambiente_nombre'),
                 
+                dia=item.get('instructor_dia'),
                 instructor_jornada_programada=item.get('instructor_jornada_programada'),
                 instructor_fecha_inicio_hora_ingreso=item.get('instructor_fecha_inicio_hora_ingreso'),
                 instructor_fecha_fin_hora_egreso=item.get('instructor_fecha_fin_hora_egreso'),
@@ -56,7 +56,6 @@ class InstructorHorarioService(BaseService):
         return [
             InstructorHorarioDTO(
                 id=item.get('instructor_horario_id'),
-                dia=item.get('instructor_dia'),
                 
                 usuario_id=item.get('usuario_id'),
                 usuario_nombres=item.get('usuario_nombres'),
@@ -78,6 +77,7 @@ class InstructorHorarioService(BaseService):
                 ambiente_codigo=item.get('ambiente_codigo'),
                 ambiente_nombre=item.get('ambiente_nombre'),
                 
+                dia=item.get('instructor_dia'),
                 instructor_jornada_programada=item.get('instructor_jornada_programada'),
                 instructor_fecha_inicio_hora_ingreso=item.get('instructor_fecha_inicio_hora_ingreso'),
                 instructor_fecha_fin_hora_egreso=item.get('instructor_fecha_fin_hora_egreso'),

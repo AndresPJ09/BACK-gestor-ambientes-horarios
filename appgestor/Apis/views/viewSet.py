@@ -17,10 +17,10 @@ from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
 from appgestor.Entity.Dao.rolvista_dao import RolVistaDAO
 from appgestor.Entity.Dao.vista_dao import VistaDAO
-from appgestor.models import  Actividad, ActividadFase, Ambiente, Competencia, ConsolidadoAmbiente, Fase, Ficha, Horario, Instructor, InstructorHorario, Modulo, NivelFormacion, Periodo, Programa, Proyecto, ProyectoFase, RecuperarContrasena, ResultadoAprendizaje, Rol, \
+from appgestor.models import  Actividad, ActividadFase, Ambiente, Competencia, ConsolidadoAmbiente, ConsolidadoHorario, Fase, Ficha, Horario, Instructor, InstructorHorario, Modulo, NivelFormacion, Periodo, Programa, Proyecto, ProyectoFase, RecuperarContrasena, ResultadoAprendizaje, Rol, \
     RolVista, TipoVinculacion, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
-    ActividadFaseSerializer, ActividadSerializer, AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoFaseSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
+    ActividadFaseSerializer, ActividadSerializer, AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, ConsolidadoHorarioSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoFaseSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
     RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, TipoVinculacionSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
     
@@ -420,7 +420,20 @@ class ConsolidadoAmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelVi
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+        return Response({"message": "Consolidado de ambiente eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+class ConsolidadoHorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ConsolidadoHorario.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ConsolidadoHorarioSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Consolidado de horario eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
 class HorarioViewSet(viewsets.ModelViewSet):
     queryset = Horario.objects.filter(fechaElimino__isnull=True)  

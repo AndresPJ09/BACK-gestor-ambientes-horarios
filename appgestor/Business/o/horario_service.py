@@ -1,7 +1,7 @@
 from appgestor.Business.base_service import BaseService
 from appgestor.Entity.Dao.o.horario_dao import HorarioDAO
 from appgestor.Entity.Dto.o.horario_dto import HorarioDTO
-from appgestor.models import Ambiente, Ficha, Horario, Instructor, InstructorHorario, Periodo, Usuario
+from appgestor.models import Ambiente, ConsolidadoAmbiente, ConsolidadoHorario, Ficha, Horario, Instructor, InstructorHorario, Periodo, Usuario
 from django.db import transaction, connection
 from django.core.exceptions import ObjectDoesNotExist
 
@@ -38,10 +38,11 @@ class HorarioService(BaseService):
             ambiente_id=ambiente,  
             periodo_id=periodo,  
             instructor_id=instructor,  
+            dia=data.get('dia'),
             jornada_programada=data.get('jornada_programada'),
             fecha_inicio_hora_ingreso=data.get('fecha_inicio_hora_ingreso'),
             fecha_fin_hora_egreso=data.get('fecha_fin_hora_egreso'),
-            horas=data.get('horas', 0),
+            horas=data.get('horas'),
             validacion=data.get('validacion'),
             observaciones=data.get('observaciones'),
             estado=estado 
@@ -49,10 +50,23 @@ class HorarioService(BaseService):
         InstructorHorario.objects.create(
             horario_id=horario,
             instructor_id=instructor,
-            dia=data.get('dia'),
             observaciones=data.get('observaciones'),
             estado=horario.estado
         )
+        
+        # Guardar solo los ID en ConsolidadoAmbiente
+        ConsolidadoAmbiente.objects.create(
+            ambiente_id=ambiente,
+            horario_id=horario,
+            estado=horario.estado
+        )
+
+        # Guardar solo los ID en ConsolidadoHorario
+        ConsolidadoHorario.objects.create(
+            horario_id=horario,
+            estado=horario.estado
+        )
+
         return horario
     
     
@@ -92,6 +106,7 @@ class HorarioService(BaseService):
              
 
             # Actualizar los datos del horario
+            horario.dia = data.get('dia', horario.dia)
             horario.jornada_programada = data.get('jornada_programada', horario.jornada_programada)
             horario.fecha_inicio_hora_ingreso = data.get('fecha_inicio_hora_ingreso', horario.fecha_inicio_hora_ingreso)
             horario.fecha_fin_hora_egreso = data.get('fecha_fin_hora_egreso', horario.fecha_fin_hora_egreso)
@@ -110,10 +125,24 @@ class HorarioService(BaseService):
             # Actualizar InstructorHorario
             instructor_horario, created = InstructorHorario.objects.get_or_create(horario_id=horario)
             instructor_horario.instructor_id = horario.instructor_id
-            instructor_horario.dia = data.get('dia', instructor_horario.dia)
             instructor_horario.observaciones = horario.observaciones
             instructor_horario.estado = horario.estado
             instructor_horario.save()
+            
+            
+            # **Actualizar ConsolidadoAmbiente (solo guardar IDs)**
+            consolidado_ambiente, created = ConsolidadoAmbiente.objects.get_or_create(horario_id=horario)
+            consolidado_ambiente.ambiente_id = horario.ambiente_id
+            consolidado_ambiente.horario_id = horario # Pasar la instancia, no el ID
+            consolidado_ambiente.estado = horario.estado
+            consolidado_ambiente.save()
+            
+            # **Actualizar ConsolidadoHorario (solo guardar IDs)**
+            consolidado_horario, created = ConsolidadoHorario.objects.get_or_create(horario_id=horario)
+            consolidado_horario.horario_id = horario # Pasar la instancia, no el ID
+            consolidado_horario.estado = horario.estado  
+            consolidado_horario.save()
+            
             return horario
 
         except ObjectDoesNotExist:
@@ -122,6 +151,8 @@ class HorarioService(BaseService):
             raise ValueError(f"Error de validación: {str(e)}")
         except Exception as e:
             raise ValueError(f"Error inesperado: {str(e)}")
+        
+        
         
         
     

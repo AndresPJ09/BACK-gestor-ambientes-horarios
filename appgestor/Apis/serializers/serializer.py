@@ -233,11 +233,20 @@ class ConsolidadoHorarioSerializer(serializers.ModelSerializer):
         
 
 class HorarioSerializer(serializers.ModelSerializer):
+    fecha_inicio_hora_ingreso = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M", 
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+    )
+    fecha_fin_hora_egreso = serializers.DateTimeField(
+        format="%Y-%m-%d %H:%M", 
+        input_formats=["%Y-%m-%dT%H:%M", "%Y-%m-%d %H:%M"]
+    )
     class Meta:
         model = Horario
         fields = '__all__'
         extra_kwargs = {
-            'fechaElimino': {'read_only': True}
+            'fechaElimino': {'read_only': True},
+            'horas': {'read_only': True},  
         
         }
 

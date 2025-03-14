@@ -10,6 +10,7 @@ class HorarioDTO:
     ambiente_id: int
     periodo_id: int
     instructor_id: int
+    dia:str
     jornada_programada: str
     fecha_inicio_hora_ingreso: datetime
     fecha_fin_hora_egreso: datetime

@@ -325,19 +325,6 @@ class Ficha(models.Model):
 def set_numero_semanas(sender, instance, **kwargs):
     instance.numero_semanas = instance.calcular_numero_semanas()
 
-class ConsolidadoAmbiente(models.Model):
-    id = models.AutoField(primary_key=True)
-    ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
-    ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
-    observaciones = models.TextField(blank=True, max_length=255)
-    estado = models.BooleanField()
-    fechaCreo = models.DateTimeField(auto_now_add=True)
-    fechaModifico = models.DateTimeField(auto_now=True)
-    fechaElimino = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'ConsolidadoAmbiente'
-
 class Horario(models.Model):
     id = models.AutoField(primary_key=True)
     usuario_id = models.ForeignKey(Usuario, on_delete = models.CASCADE, null=True)
@@ -345,11 +332,11 @@ class Horario(models.Model):
     ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
     periodo_id = models.ForeignKey(Periodo, on_delete = models.CASCADE, null=True)
     instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE)
-    
+    dia = models.CharField(blank=True, max_length=20, null=True)
     jornada_programada = models.CharField(max_length=255)
     fecha_inicio_hora_ingreso = models.DateTimeField()
     fecha_fin_hora_egreso = models.DateTimeField()
-    horas = models.IntegerField()
+    horas = models.IntegerField(default=0)
     validacion = models.CharField(max_length=255)
     observaciones = models.TextField(blank=True, max_length=255)
     
@@ -370,8 +357,7 @@ class Horario(models.Model):
     
 class ConsolidadoHorario(models.Model):
     id = models.AutoField(primary_key=True)
-    ficha_id = models.ForeignKey(Ficha, on_delete = models.CASCADE, null=True)
-    instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE, null=True)
+    horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
     observaciones = models.TextField(blank=True, max_length=255)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
@@ -380,10 +366,22 @@ class ConsolidadoHorario(models.Model):
 
     class Meta:
         db_table = 'ConsolidadoHorario'
+        
+class ConsolidadoAmbiente(models.Model):
+    id = models.AutoField(primary_key=True)
+    horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
+    ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
+    observaciones = models.TextField(blank=True, max_length=255)
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ConsolidadoAmbiente'
     
 class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)
-    dia = models.TextField(blank=True, max_length=20, null=True)
     horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
     instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE, null=True)
     observaciones = models.TextField(blank=True, max_length=255)
