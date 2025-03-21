@@ -14,7 +14,7 @@ class RolVistaService(BaseService):
 
         return [
             RolVistaDTO(
-                # rolvista_id=rolvista['rolvista_id'],
+                rolvista_id=rolvista['rolvista_id'],
                 rol_id=rolvista['rol_id'],
                 nombre_rol=rolvista['nombre_rol'],
                 vista_id=rolvista['vista_id'],
