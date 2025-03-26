@@ -42,9 +42,6 @@ class VistaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet
     queryset = Vista.objects.filter(fechaElimino__isnull=True)
     serializer_class = VistaSerializer
 
-    def get_queryset(self):
-        return VistaDAO.obtener_datos()
-
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs, partial=True)
 

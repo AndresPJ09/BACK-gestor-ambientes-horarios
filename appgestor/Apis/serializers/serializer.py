@@ -168,6 +168,7 @@ class TipoVinculacionSerializer(serializers.ModelSerializer):
         }
 
 class ProgramaSerializer(serializers.ModelSerializer):
+    nombre_nivel_formacion = serializers.CharField(source="nivel_formacion_id.nombre", read_only=True)
     class Meta:
         model = Programa
         fields = '__all__'
