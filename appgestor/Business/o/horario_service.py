@@ -85,6 +85,10 @@ class HorarioService(BaseService):
             if not ficha.estado:
                 raise ValueError("No se puede asignar una ficha inactiva.")
             horario.ficha_id = ficha
+            
+            if 'usuario_id' in data:
+                usuario = Usuario.objects.get(id=data['usuario_id'])
+                horario.usuario_id = usuario
         
             if 'ambiente_id' in data:
                 ambiente = Ambiente.objects.get(id=data['ambiente_id'])
