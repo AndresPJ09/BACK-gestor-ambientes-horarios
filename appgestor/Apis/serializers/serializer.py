@@ -95,7 +95,7 @@ class VerificarCodigoSerializer(serializers.Serializer):
 # Gestor de ambienteas y h
 
 class InstructorSerializer(serializers.ModelSerializer):
-    foto = serializers.CharField(required=False, allow_null=True)  # Recibimos Base64 como string
+    foto = serializers.CharField(required=False, allow_null=True, allow_blank=True) # Recibimos Base64 como string
     nombre_tipo_vinculacion = serializers.CharField(source="tipo_vinculacion_id.nombre", read_only=True)
 
     class Meta:
@@ -119,7 +119,9 @@ class InstructorSerializer(serializers.ModelSerializer):
     def update(self, instance, validated_data):
         # Manejar actualización de la foto
         foto_base64 = validated_data.pop('foto', None)
-        if foto_base64:
+        if foto_base64 == "":
+            instance.foto = None  # Si es vacío, lo eliminamos
+        elif foto_base64:
             try:
                 instance.foto = base64.b64decode(foto_base64)
             except Exception as e:
