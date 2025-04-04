@@ -353,19 +353,6 @@ class CompetenciaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Competencia eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-
-class ResultadoAprendizajeViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
-    queryset = ResultadoAprendizaje.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
-    serializer_class = ResultadoAprendizajeSerializer
-
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs, partial=True)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.fechaElimino = timezone.now()
-        instance.save()
-        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
 class ProyectoViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = Proyecto.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
@@ -557,3 +544,16 @@ class ActividadFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet 
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Actividad fase eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+class ResultadoAprendizajeViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ResultadoAprendizaje.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ResultadoAprendizajeSerializer
+
+    def update(self, request, *args, **kwargs):
+        return super().update(request, *args, **kwargs, partial=True)
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Resultado de aprendizaje eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)

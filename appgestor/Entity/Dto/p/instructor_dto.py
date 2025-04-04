@@ -1,6 +1,6 @@
 from dataclasses import dataclass
-from datetime import datetime
 from typing import Optional
+from datetime import datetime, time
 
 
 @dataclass
@@ -15,10 +15,11 @@ class InstructorDTO:
     correo: str
     fecha_inicio: datetime
     fecha_finalizacion: datetime
-    hora_ingreso: datetime.time
-    hora_egreso: datetime.time
+    hora_ingreso: time
+    hora_egreso: time
     horas_asignadas: int
     estado: bool
     fechaCreo: datetime
     fechaModifico: datetime | None # type: ignore
     fechaElimino: datetime | None # type: ignore
+    

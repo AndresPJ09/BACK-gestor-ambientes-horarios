@@ -243,19 +243,6 @@ class Competencia(models.Model):
     
     class Meta:
         db_table = 'Competencia'
-        
-class ResultadoAprendizaje(models.Model):
-    id = models.AutoField(primary_key=True)
-    descripcion = models.TextField(max_length=250)
-    est_ideal_evaluacion = models.CharField(max_length=20)
-    competencia_id = models.ForeignKey(Competencia, on_delete=models.CASCADE)
-    estado = models.BooleanField()
-    fechaCreo = models.DateTimeField(auto_now_add=True)
-    fechaModifico = models.DateTimeField(auto_now=True)
-    fechaElimino = models.DateTimeField(blank=True, null=True)
-
-    class Meta:
-        db_table = 'ResultadoAprendizaje'
 
 class Proyecto(models.Model):
     id = models.AutoField(primary_key=True)
@@ -286,7 +273,59 @@ class Fase(models.Model):
     
     class Meta:
         db_table = 'Fase'
+
+
+class ProyectoFase(models.Model):
+    id = models.AutoField(primary_key=True)
+    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE, null=True)
+    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'ProyectoFase'
         
+        
+class Actividad(models.Model):
+    id = models.AutoField(primary_key=True)
+    proyectofase_id = models.ForeignKey(ProyectoFase, on_delete = models.CASCADE, null=True)
+    nombre = models.CharField(max_length=100)
+    estado = models.BooleanField()
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+
+    class Meta:
+        db_table = 'Actividad'
+        
+class ActividadFase(models.Model):
+    id = models.AutoField(primary_key=True)
+    actividad_id = models.ForeignKey(Actividad, on_delete = models.CASCADE, null=True)
+    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
+    fecha_inicio_actividad = models.DateField()
+    fecha_fin_actividad = models.DateField()
+    numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
+    fechaCreo = models.DateTimeField(auto_now_add=True)
+    fechaModifico = models.DateTimeField(auto_now=True)
+    fechaElimino = models.DateTimeField(blank=True, null=True)
+    
+    def calcular_numero_semanas(self):
+        """Calcula la diferencia en semanas entre fecha_inicio_actividad y fecha_fin_actividad"""
+        if self.fecha_inicio_actividad and self.fecha_fin_actividad:
+            return (self.fecha_fin_actividad - self.fecha_inicio_actividad).days // 7
+        return 0  # Si no hay fechas, retorna 0
+
+    class Meta:
+        db_table = 'ActividadFase'
+        
+# 🚀 Mover la señal fuera de la clase para evitar el error
+@receiver(pre_save, sender=ActividadFase)
+def set_numero_semanas(sender, instance, **kwargs):
+    instance.numero_semanas = instance.calcular_numero_semanas()
+        
+    
+    
 class Ficha(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
@@ -393,50 +432,17 @@ class InstructorHorario(models.Model):
     class Meta:
         db_table = 'InstructorHorario'
               
-class ProyectoFase(models.Model):
-    id = models.AutoField(primary_key=True)
-    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE, null=True)
-    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
-    fechaCreo = models.DateTimeField(auto_now_add=True)
-    fechaModifico = models.DateTimeField(auto_now=True)
-    fechaElimino = models.DateTimeField(blank=True, null=True)
 
-    class Meta:
-        db_table = 'ProyectoFase'
-          
-class Actividad(models.Model):
+class ResultadoAprendizaje(models.Model):
     id = models.AutoField(primary_key=True)
-    nombre = models.CharField(max_length=100)
-    proyectofase_id = models.ForeignKey(ProyectoFase, on_delete = models.CASCADE, null=True)
+    descripcion = models.TextField(max_length=250)
+    est_ideal_evaluacion = models.CharField(max_length=20)
+    actividadfase_id = models.ForeignKey(ActividadFase, on_delete=models.CASCADE, null=True, blank=True)
+    competencia_id = models.ForeignKey(Competencia, on_delete=models.CASCADE)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
     fechaElimino = models.DateTimeField(blank=True, null=True)
 
     class Meta:
-        db_table = 'Actividad'
-
-class ActividadFase(models.Model):
-    id = models.AutoField(primary_key=True)
-    actividad_id = models.ForeignKey(Actividad, on_delete = models.CASCADE, null=True)
-    fase_id = models.ForeignKey(Fase, on_delete = models.CASCADE, null=True)
-    fecha_inicio_actividad = models.DateField()
-    fecha_fin_actividad = models.DateField()
-    numero_semanas = models.IntegerField(editable=False, null=True, blank=True)
-    fechaCreo = models.DateTimeField(auto_now_add=True)
-    fechaModifico = models.DateTimeField(auto_now=True)
-    fechaElimino = models.DateTimeField(blank=True, null=True)
-    
-    def calcular_numero_semanas(self):
-        """Calcula la diferencia en semanas entre fecha_inicio_actividad y fecha_fin_actividad"""
-        if self.fecha_inicio_actividad and self.fecha_fin_actividad:
-            return (self.fecha_fin_actividad - self.fecha_inicio_actividad).days // 7
-        return 0  # Si no hay fechas, retorna 0
-
-    class Meta:
-        db_table = 'ActividadFase'
-        
-# 🚀 Mover la señal fuera de la clase para evitar el error
-@receiver(pre_save, sender=ActividadFase)
-def set_numero_semanas(sender, instance, **kwargs):
-    instance.numero_semanas = instance.calcular_numero_semanas()
+        db_table = 'ResultadoAprendizaje'
