@@ -114,15 +114,15 @@ class RecuperarContrasena(models.Model):
         db_table = 'RecuperarContrasena'
 
 ####################################
-#           parametrización        #   
+#              Gestion             #   
 ####################################
 
 
 class TipoVinculacion(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
-    nombre = models.CharField(max_length=180)
-    descripcion = models.TextField(max_length=180)
+    nombre = models.CharField(max_length=50)
+    descripcion = models.TextField(max_length=250)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
@@ -162,7 +162,7 @@ class Instructor(models.Model):
 class NivelFormacion(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
-    nombre = models.CharField(max_length=250)
+    nombre = models.CharField(max_length=100)
     duracion = models.CharField(max_length=100)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
@@ -187,7 +187,7 @@ class Programa(models.Model):
 
 class Ambiente(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=50, unique=True)
+    codigo = models.CharField(max_length=20, unique=True)
     nombre = models.CharField(max_length=100)
     capacidad = models.IntegerField(
              default=0, 
@@ -230,8 +230,8 @@ class Periodo(models.Model):
 
 class Competencia(models.Model):
     id = models.AutoField(primary_key=True)
-    codigo = models.CharField(max_length=20, null=True)
-    nombre = models.CharField(max_length=255)
+    codigo = models.CharField(max_length=20, null=True, unique=True)
+    nombre = models.CharField(max_length=100)
     descripcion = models.TextField(blank=True, null=True)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
@@ -329,13 +329,14 @@ def set_numero_semanas(sender, instance, **kwargs):
 class Ficha(models.Model):
     id = models.AutoField(primary_key=True)
     codigo = models.CharField(max_length=20, unique=True)
-    programa_id = models.ForeignKey(Programa, on_delete = models.CASCADE, null=True)
-    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE, null=True)
+    programa_id = models.ForeignKey(Programa, on_delete = models.CASCADE)
+    proyecto_id = models.ForeignKey(Proyecto, on_delete = models.CASCADE)
     fecha_inicio = models.DateField()
     fecha_fin = models.DateField()
     fin_lectiva = models.DateField()
     cupo = models.IntegerField(
-             default=0, 
+        null=False,
+        default=0, 
         validators=[
             MinValueValidator(20), 
             MaxValueValidator(40)
@@ -372,12 +373,12 @@ class Horario(models.Model):
     periodo_id = models.ForeignKey(Periodo, on_delete = models.CASCADE, null=True)
     instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE)
     dia = models.CharField(blank=True, max_length=20, null=True)
-    jornada_programada = models.CharField(max_length=255)
+    jornada_programada = models.CharField(max_length=20)
     fecha_inicio_hora_ingreso = models.DateTimeField()
     fecha_fin_hora_egreso = models.DateTimeField()
     horas = models.IntegerField(default=0)
-    validacion = models.CharField(max_length=255)
-    observaciones = models.TextField(blank=True, max_length=255)
+    validacion = models.CharField(max_length=20)
+    observaciones = models.TextField(blank=True, max_length=250)
     
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
@@ -410,7 +411,7 @@ class ConsolidadoAmbiente(models.Model):
     id = models.AutoField(primary_key=True)
     horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
     ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
-    observaciones = models.TextField(blank=True, max_length=255)
+    observaciones = models.TextField(blank=True, max_length=250)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
@@ -423,7 +424,7 @@ class InstructorHorario(models.Model):
     id = models.AutoField(primary_key=True)
     horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
     instructor_id = models.ForeignKey(Instructor, on_delete = models.CASCADE, null=True)
-    observaciones = models.TextField(blank=True, max_length=255)
+    observaciones = models.TextField(blank=True, max_length=250)
     estado = models.BooleanField()
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)

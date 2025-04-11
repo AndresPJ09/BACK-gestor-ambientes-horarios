@@ -269,6 +269,16 @@ class ProyectoFaseSerializer(serializers.ModelSerializer):
             'fechaElimino': {'read_only': True}
         }
         
+class ProyectoFaseDTOResponseSerializer(serializers.Serializer):
+    id = serializers.IntegerField()
+    proyecto_id = serializers.IntegerField()
+    fase_id = serializers.IntegerField()
+    proyecto_fase_nombre = serializers.CharField()
+    estado = serializers.BooleanField()
+    fechaCreo = serializers.DateTimeField()
+    fechaModifico = serializers.DateTimeField(allow_null=True)
+    fechaElimino = serializers.DateTimeField(allow_null=True)
+        
 class ActividadSerializer(serializers.ModelSerializer):
     class Meta:
         model= Actividad
@@ -276,7 +286,7 @@ class ActividadSerializer(serializers.ModelSerializer):
         extra_kwargs = {
             'fechaElimino': {'read_only': True}
         }
-
+        
 class ActividadFaseSerializer(serializers.ModelSerializer):
     class Meta:
         model= ActividadFase

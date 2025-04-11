@@ -8,3 +8,6 @@ class ActividadService(BaseService):
     dao=ActividadDAO
     model=ActividadDTO
     
+    @staticmethod
+    def listar_actividades_completas():
+        return ActividadDAO.get_actividades_completas()

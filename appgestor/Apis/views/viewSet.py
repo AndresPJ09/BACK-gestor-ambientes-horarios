@@ -10,8 +10,10 @@ from django.utils import timezone  # ✅ Importar timezone correctamente
 from yaml import serialize
 from dataclasses import asdict
 
+from appgestor.Business.o.actvidad_service import ActividadService
 from appgestor.Business.o.horario_service import HorarioService
 from appgestor.Business.o.instructorhorario_service import InstructorHorarioService
+from appgestor.Business.o.proyectofase_service import ProyectoFaseService
 from appgestor.Business.recuperarContrasena_service import RecuperarContrasenaService
 from appgestor.Business.rolVista_service import RolVistaService
 from appgestor.Business.usuario_service import UsuarioService
@@ -20,7 +22,7 @@ from appgestor.Entity.Dao.vista_dao import VistaDAO
 from appgestor.models import  Actividad, ActividadFase, Ambiente, Competencia, ConsolidadoAmbiente, ConsolidadoHorario, Fase, Ficha, Horario, Instructor, InstructorHorario, Modulo, NivelFormacion, Periodo, Programa, Proyecto, ProyectoFase, RecuperarContrasena, ResultadoAprendizaje, Rol, \
     RolVista, TipoVinculacion, Usuario, UsuarioRol, Vista, TipoDocumento  # ✅ Importar solo lo necesario
 from appgestor.Apis.serializers.serializer import \
-    ActividadFaseSerializer, ActividadSerializer, AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, ConsolidadoHorarioSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoFaseSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
+    ActividadFaseSerializer, ActividadSerializer, AmbienteSerializer, CompetenciaSerializer, ConsolidadoAmbienteSerializer, ConsolidadoHorarioSerializer, EnviarCodigoSerializer, FaseSerializer, FichaSerializer, HorarioSerializer, InstructorHorarioSerializer, InstructorSerializer, ModuloSerializer, NivelFormacionSerializer, PeriodoSerializer, ProgramaSerializer, ProyectoFaseDTOResponseSerializer, ProyectoFaseSerializer, ProyectoSerializer,  RecuperarContrasenaSerializer, ResultadoAprendizajeSerializer, \
     RolSerializer, RolVistaSerializer, TipoDocumentoSerializer, TipoVinculacionSerializer, UsuarioLoginSerializer, UsuarioRolSerializer, \
     UsuarioSerializer, VerificarCodigoSerializer, VistaSerializer  # ✅ Importar explícitamente
     
@@ -513,6 +515,20 @@ class ProyectoFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet e
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs, partial=True)
     
+    def list(self, request):
+        try:
+            proyectofase = ProyectoFaseService.obtener_proyecto_fase_nombre()  # Ahora sí recibe objetos DTO
+
+            if not proyectofase:
+                return Response({'error': 'No hay contenido'}, status=status.HTTP_204_NO_CONTENT)
+
+            # ✅ Ahora `asdict()` funcionará correctamente
+            ProyectoFase_dict = [asdict(ProyectoFase) for ProyectoFase in proyectofase]
+            return Response(ProyectoFase_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+    
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
@@ -531,6 +547,7 @@ class ActividadViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en V
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Actividad eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
        
 class ActividadFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = ActividadFase.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
