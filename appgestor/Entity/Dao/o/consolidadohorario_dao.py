@@ -58,7 +58,6 @@ class ConsolidadoHorarioDAO(BaseDAO):
                 LEFT JOIN resultadoaprendizaje RAP ON AF.id = RAP.actividadfase_id_id
                 LEFT JOIN competencia C ON RAP.competencia_id_id = C.id
             WHERE CH.fechaElimino IS NULL;
-
             """)
             columns = [col[0] for col in cursor.description]
             result = [dict(zip(columns, row)) for row in cursor.fetchall()]

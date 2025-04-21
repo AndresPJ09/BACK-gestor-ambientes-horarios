@@ -1,3 +1,4 @@
+from appgestor.Business.o.actividadfase_service import ActividadFaseService
 from appgestor.Business.o.consolidadoambiente_service import ConsolidadoAmbienteService
 from appgestor.Business.o.consolidadohorario_service import ConsolidadoHorarioService
 from drf_yasg import openapi
@@ -591,6 +592,20 @@ class ActividadFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet 
 
     def update(self, request, *args, **kwargs):
         return super().update(request, *args, **kwargs, partial=True)
+
+    def list(self, request):
+        try:
+            actividadfase = ActividadFaseService.obtener_actividad_fase_nombre()  # Ahora sí recibe objetos DTO
+
+            if not actividadfase:
+                return Response({'error': 'No hay contenido'}, status=status.HTTP_204_NO_CONTENT)
+
+            # ✅ Ahora `asdict()` funcionará correctamente
+            ActividadFase_dict = [asdict(ActividadFase) for ActividadFase in actividadfase]
+            return Response(ActividadFase_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
