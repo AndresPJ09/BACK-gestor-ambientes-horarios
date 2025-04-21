@@ -6,14 +6,12 @@ class ConsolidadoAmbienteDTO:
     id: int
     ambiente_id: int
     ambiente_codigo: str
-    ambiente_nombre: str
     ficha_id: int
     ficha_codigo: str
     usuario_id: int
-    usuario_nombres: str
+    usuario_nombre_completo: str
     instructor_id: int
-    instructor_nombres: str
-    instructor_apellidos: str
+    instructor_nombre_completo: str
     programa_id: int
     programa_nombre: str
     nivel_formacion_id: int

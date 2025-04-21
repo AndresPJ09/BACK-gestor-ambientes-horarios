@@ -1,3 +1,5 @@
+from appgestor.Business.o.consolidadoambiente_service import ConsolidadoAmbienteService
+from appgestor.Business.o.consolidadohorario_service import ConsolidadoHorarioService
 from drf_yasg import openapi
 from rest_framework.decorators import action
 from rest_framework import viewsets
@@ -395,32 +397,6 @@ class FichaViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en Vista
         instance.save()
         return Response({"message": "Ficha eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
     
-class ConsolidadoAmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
-    queryset = ConsolidadoAmbiente.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
-    serializer_class = ConsolidadoAmbienteSerializer
-
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs, partial=True)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.fechaElimino = timezone.now()
-        instance.save()
-        return Response({"message": "Consolidado de ambiente eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-    
-class ConsolidadoHorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
-    queryset = ConsolidadoHorario.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
-    serializer_class = ConsolidadoHorarioSerializer
-
-    def update(self, request, *args, **kwargs):
-        return super().update(request, *args, **kwargs, partial=True)
-    
-    def destroy(self, request, *args, **kwargs):
-        instance = self.get_object()
-        instance.fechaElimino = timezone.now()
-        instance.save()
-        return Response({"message": "Consolidado de horario eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
-    
 class HorarioViewSet(viewsets.ModelViewSet):
     queryset = Horario.objects.filter(fechaElimino__isnull=True)  
     serializer_class = HorarioSerializer
@@ -457,7 +433,7 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
     queryset = InstructorHorario.objects.filter(fechaElimino__isnull=True)
     serializer_class = InstructorHorarioSerializer
     
-    @action(detail=False, methods=['get'], url_path='usuario/(?P<usuario_id>\d+)')
+    @action(detail=False, methods=['get'], url_path=r'usuario/(?P<usuario_id>\d+)')
     def filtrar_por_usuario(self, request, usuario_id=None):
         if not usuario_id:
             return Response({'error': 'Se requiere el usuario_id'}, status=status.HTTP_400_BAD_REQUEST)
@@ -472,7 +448,7 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
 
-    @action(detail=False, methods=['get'], url_path='periodo/(?P<periodo_id>\d+)')
+    @action(detail=False, methods=['get'], url_path=r'periodo/(?P<periodo_id>\d+)')
     def filtrar_por_periodo(self, request, periodo_id=None):
         if not periodo_id:
             return Response({'error': 'Se requiere el periodo_id'}, status=status.HTTP_400_BAD_REQUEST)
@@ -494,20 +470,80 @@ class InstructorHorarioViewSet(viewsets.ModelViewSet):
             if not horarioinstructor:
                 return Response({'error': 'No hay contenido'}, status=status.HTTP_204_NO_CONTENT)
 
-            # ✅ Ahora `asdict()` funcionará correctamente
             InstructorHorario_dict = [asdict(InstructorHorario) for InstructorHorario in horarioinstructor]
             return Response(InstructorHorario_dict, status=status.HTTP_200_OK)
 
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
     
-
     def destroy(self, request, *args, **kwargs):
         instance = self.get_object()
         instance.fechaElimino = timezone.now()
         instance.save()
         return Response({"message": "Horario de instructor eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
 
+class ConsolidadoAmbienteViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ConsolidadoAmbiente.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ConsolidadoAmbienteSerializer
+
+    def list(self, request):
+        try:
+            # Obtenemos los datos del servicio (ya convertidos a DTOs)
+            consolidadoambiente = ConsolidadoAmbienteService.obtener_todos_los_ambientes()
+
+            if not consolidadoambiente:
+                return Response(
+                    {'message': 'No se encontraron registros de consolidados'}, 
+                    status=status.HTTP_204_NO_CONTENT
+                )
+
+            # Convertimos los DTOs a diccionarios
+            consolidadoAmbiente_dict = [asdict(consolidadoAmbiente) for consolidadoAmbiente in consolidadoambiente]
+            return Response(consolidadoAmbiente_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {'error': f'Error al obtener consolidados: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Consolidado de ambiente eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
+class ConsolidadoHorarioViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
+    queryset = ConsolidadoHorario.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
+    serializer_class = ConsolidadoHorarioSerializer
+
+    def list(self, request):
+        try:
+            # Obtenemos los datos del servicio (ya convertidos a DTOs)
+            consolidadohorario = ConsolidadoHorarioService.obtener_todos_los_consolidados()
+
+            if not consolidadohorario:
+                return Response(
+                    {'message': 'No se encontraron registros de consolidados'}, 
+                    status=status.HTTP_204_NO_CONTENT
+                )
+
+            # Convertimos los DTOs a diccionarios
+            ConsolidadoHorario_dict = [asdict(ConsolidadoHorario) for ConsolidadoHorario in consolidadohorario]
+            return Response(ConsolidadoHorario_dict, status=status.HTTP_200_OK)
+
+        except Exception as e:
+            return Response(
+                {'error': f'Error al obtener consolidados: {str(e)}'},
+                status=status.HTTP_500_INTERNAL_SERVER_ERROR
+            )
+    
+    def destroy(self, request, *args, **kwargs):
+        instance = self.get_object()
+        instance.fechaElimino = timezone.now()
+        instance.save()
+        return Response({"message": "Consolidado de horario eliminado correctamente"}, status=status.HTTP_204_NO_CONTENT)
+    
 class ProyectoFaseViewSet(viewsets.ModelViewSet):  # ✅ Cambiado ModelViewSet en VistaViewSet
     queryset = ProyectoFase.objects.filter(fechaElimino__isnull=True)  # Filtra solo los activos
     serializer_class = ProyectoFaseSerializer

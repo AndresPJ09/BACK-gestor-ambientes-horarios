@@ -1,13 +1,8 @@
 from django.db import connection
+from appgestor.Entity.Dao.base_dao import BaseDAO
 from appgestor.models import InstructorHorario
 
-class InstructorHorarioDAO:
-    model = InstructorHorario
-
-    from django.db import connection
-from appgestor.models import InstructorHorario
-
-class InstructorHorarioDAO:
+class InstructorHorarioDAO(BaseDAO):
     model = InstructorHorario
 
     @staticmethod

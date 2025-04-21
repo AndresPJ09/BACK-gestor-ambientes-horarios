@@ -7,7 +7,7 @@ class ProyectoFaseDAO(BaseDAO):
     
     
     @classmethod
-    def obtener_proyecto_fase_nombre():
+    def obtener_proyecto_fase_nombre(cls):
         with connection.cursor() as cursor:
             cursor.execute("""
                 SELECT 
@@ -18,17 +18,16 @@ class ProyectoFaseDAO(BaseDAO):
                 PF.fechaCreo,
                 PF.fechaModifico,
                 PF.fechaElimino
-            FROM 
+                FROM 
                 sena.ProyectoFase AS PF
-            INNER JOIN
+                INNER JOIN
                 sena.Proyecto AS PRO ON PF.proyecto_id_id = PRO.id
-            INNER JOIN 
+                INNER JOIN 
                 sena.Fase AS F ON PF.fase_id_id = F.id
-            WHERE 
+                WHERE 
                 PF.fechaElimino IS NULL;
-        """)
-        columns = [col[0] for col in cursor.description]
-        result = [dict(zip(columns, row)) for row in cursor.fetchall()]
-
+            """)
+            columns = [col[0] for col in cursor.description]
+            result = [dict(zip(columns, row)) for row in cursor.fetchall()]
         return result
         

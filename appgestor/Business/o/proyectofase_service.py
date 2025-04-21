@@ -7,7 +7,7 @@ class ProyectoFaseService(BaseService):
     model = ProyectoFaseDTO
     
     @classmethod
-    def obtener_proyecto_fase_nombre():
+    def obtener_proyecto_fase_nombre(cls):
         query = ProyectoFaseDAO.obtener_proyecto_fase_nombre()
 
         return [

@@ -21,6 +21,7 @@ class ConsolidadoHorarioDTO:
     competencia_descripcion: str
     resultadoaprendizaje_id: int
     resultadoaprendizaje_descripcion: str
+    resultadoaprendizaje_est_ideal_evaluacion: str
     actvidadfase_id: int
     actvidadfase_fecha_inicio_actividad: str
     actvidadfase_fecha_fin_actividad: str

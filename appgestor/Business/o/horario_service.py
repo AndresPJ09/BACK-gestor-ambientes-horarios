@@ -5,9 +5,20 @@ from appgestor.models import Ambiente, ConsolidadoAmbiente, ConsolidadoHorario, 
 from django.db import transaction, connection
 from django.core.exceptions import ObjectDoesNotExist
 
+# Este helper lo puedes tener al inicio del archivo o antes de la clase
+
+# Mapea automáticamente el estado booleano a estado de ConsolidadoAmbiente
+def map_estado_consolidado(estado_bool):
+    if estado_bool in [True, 'true', '1', 1]:
+        return '1'  # Disponible
+    elif estado_bool in [False, 'false', '0', 0]:
+        return '3'  # Inactivo
+    return '2'  # Default a Ocupado si es ambiguo
+
 class HorarioService(BaseService):
     dao=HorarioDAO
     model=HorarioDTO
+
     
     @staticmethod
     @transaction.atomic
@@ -55,10 +66,11 @@ class HorarioService(BaseService):
         )
         
         # Guardar solo los ID en ConsolidadoAmbiente
+        estado_consolidado = map_estado_consolidado(estado)
         ConsolidadoAmbiente.objects.create(
             ambiente_id=ambiente,
             horario_id=horario,
-            estado=horario.estado
+            estado=estado_consolidado
         )
 
         # Guardar solo los ID en ConsolidadoHorario
@@ -138,7 +150,8 @@ class HorarioService(BaseService):
             consolidado_ambiente, created = ConsolidadoAmbiente.objects.get_or_create(horario_id=horario)
             consolidado_ambiente.ambiente_id = horario.ambiente_id
             consolidado_ambiente.horario_id = horario # Pasar la instancia, no el ID
-            consolidado_ambiente.estado = horario.estado
+            estado_consolidado = map_estado_consolidado(horario.estado)
+            consolidado_ambiente.estado = estado_consolidado
             consolidado_ambiente.save()
             
             # **Actualizar ConsolidadoHorario (solo guardar IDs)**

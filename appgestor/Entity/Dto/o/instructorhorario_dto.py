@@ -3,8 +3,8 @@ from datetime import datetime
 
 @dataclass
 class InstructorHorarioDTO:
-    id: int  # Antes "instructor_horario_id"
-    dia: str  # Antes "instructor_dia"
+    id: int 
+    dia: str  
     usuario_id: int
     usuario_nombres: str
     instructor_id: int

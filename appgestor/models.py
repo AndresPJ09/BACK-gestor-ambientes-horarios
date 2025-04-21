@@ -408,15 +408,22 @@ class ConsolidadoHorario(models.Model):
         db_table = 'ConsolidadoHorario'
         
 class ConsolidadoAmbiente(models.Model):
-    id = models.AutoField(primary_key=True)
-    horario_id = models.ForeignKey(Horario, on_delete = models.CASCADE, null=True)
-    ambiente_id = models.ForeignKey(Ambiente, on_delete = models.CASCADE, null=True)
+    ESTADO_CHOICES = [
+        ('1', 'Disponible'),
+        ('2', 'Ocupado'),
+        ('3', 'Inactivo'),
+    ]
+
+    horario_id = models.ForeignKey(Horario, on_delete=models.CASCADE, null=True)
+    ambiente_id = models.ForeignKey(Ambiente, on_delete=models.CASCADE, null=True)
     observaciones = models.TextField(blank=True, max_length=250)
-    estado = models.BooleanField()
+    estado = models.CharField(max_length=1, choices=ESTADO_CHOICES, default='1')  # por defecto 'Disponible'
     fechaCreo = models.DateTimeField(auto_now_add=True)
     fechaModifico = models.DateTimeField(auto_now=True)
     fechaElimino = models.DateTimeField(blank=True, null=True)
 
+    def __str__(self):
+        return f"Ambiente: {self.ambiente} | Horario: {self.horario} | Estado: {self.get_estado_display()}"
     class Meta:
         db_table = 'ConsolidadoAmbiente'
     
