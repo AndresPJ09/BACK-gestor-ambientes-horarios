@@ -31,8 +31,8 @@ class HorarioService(BaseService):
         estado = data.get('estado', True) 
         if isinstance(estado, str):  
             estado = estado.lower() == 'true' 
-             
-         # ✅ Convertir `activo` en booleano manualmente
+        
+        # ✅ Convertir `activo` en booleano manualmente
         if not bool(ambiente.estado):
             raise ValueError("No se puede asignar un horario a un ambiente inactivo.")
         if not bool(ficha.estado):
@@ -42,6 +42,26 @@ class HorarioService(BaseService):
         if not bool(instructor.estado):
             raise ValueError("No se puede asignar un horario a un instructor inactivo.")
         
+        # Verificar si el instructor ya tiene un horario en el mismo día y jornada
+        existe_horario_instructor = Horario.objects.filter(
+            instructor_id=instructor,
+            dia=data.get('dia'),
+            jornada_programada=data.get('jornada_programada')   
+        ).exists()
+
+        if existe_horario_instructor:
+            raise ValueError("Este instructor ya tiene un horario asignado en ese día y jornada.")
+        
+        # Verificar si ya existe un horario en ese ambiente para ese día y jornada
+        ambiente_ocupado = Horario.objects.filter(
+            ambiente_id=ambiente,
+            dia=data.get('dia'),
+            jornada_programada=data.get('jornada_programada')
+        ).exists()
+
+        if ambiente_ocupado:
+            raise ValueError("Este ambiente ya está ocupado para ese día y jornada.")
+
         
         horario = Horario.objects.create(
             usuario_id=usuario,  
@@ -78,10 +98,9 @@ class HorarioService(BaseService):
             horario_id=horario,
             estado=horario.estado
         )
-
         return horario
     
-    
+
     @staticmethod
     @transaction.atomic
     def update_horario_con_instructor(horario_id, data):
@@ -119,7 +138,26 @@ class HorarioService(BaseService):
             if not instructor.estado:
                 raise ValueError("No se puede asignar un instructor inactivo.")
             horario.instructor_id = instructor
-             
+
+            # Verificar si el instructor ya tiene un horario en el mismo día y jornada
+            existe_horario_instructor = Horario.objects.filter(
+                instructor_id=instructor,
+                dia=data.get('dia'),
+                jornada_programada=data.get('jornada_programada')   
+            ).exists()
+
+            if existe_horario_instructor:
+                raise ValueError("Este instructor ya tiene un horario asignado en ese día y jornada.")
+        
+            # Verificar si ya existe un horario en ese ambiente para ese día y jornada
+            ambiente_ocupado = Horario.objects.filter(
+                ambiente_id=ambiente,
+                dia=data.get('dia'),
+                jornada_programada=data.get('jornada_programada')
+            ).exists()
+
+            if ambiente_ocupado:
+                raise ValueError("Este ambiente ya está ocupado para ese día y jornada.")
 
             # Actualizar los datos del horario
             horario.dia = data.get('dia', horario.dia)
@@ -146,7 +184,7 @@ class HorarioService(BaseService):
             instructor_horario.save()
             
             
-            # **Actualizar ConsolidadoAmbiente (solo guardar IDs)**
+            # Actualizar ConsolidadoAmbiente (solo guardar IDs)
             consolidado_ambiente, created = ConsolidadoAmbiente.objects.get_or_create(horario_id=horario)
             consolidado_ambiente.ambiente_id = horario.ambiente_id
             consolidado_ambiente.horario_id = horario # Pasar la instancia, no el ID
